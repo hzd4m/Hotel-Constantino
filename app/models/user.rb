@@ -4,7 +4,7 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
-  enum role: { editor: 0, admin: 1 }, _default: :editor
+  enum :role, { editor: 0, admin: 1 }
 
   def admin?
     role == 'admin'
