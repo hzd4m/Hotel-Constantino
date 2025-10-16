@@ -21,7 +21,7 @@ O desenvolvimento é organizado em sprints enxutas, documentadas em `/docs/sprin
 
 - Ruby 3.0+
 - Rails 7.0+
-- MySql (ou outro banco configurado em `database.yml`)
+- SQLite (padrão do Rails, configurado em `database.yml`)
 - Gems principais: devise, kaminari, bootstrap, prawn, csv
 
 ## Como Rodar Localmente
