@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  data_checkin: 2025-10-16
+  data_checkout: 2025-10-16
+  status: MyString
+  valor_total: 9.99
+  hotel: one
+  hospede: one
+
+two:
+  data_checkin: 2025-10-16
+  data_checkout: 2025-10-16
+  status: MyString
+  valor_total: 9.99
+  hotel: two
+  hospede: two

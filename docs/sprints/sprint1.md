@@ -31,4 +31,7 @@ Migrations + models + seeds executando.
 ## Critérios de Aceite
 
 - rails db:migrate e rails db:seed sem erros.
-- Associação e validações testadas no console (rails console).
+- Associação e validações testadas no console (rails console). 
+
+
+
