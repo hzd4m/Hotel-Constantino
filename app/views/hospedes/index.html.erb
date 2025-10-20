@@ -1,0 +1,25 @@
+<h1>Lista de Hóspedes</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Nome</th>
+      <th>Documento</th>
+      <th>Email</th>
+      <th>Telefone</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @hospedes.each do |hospede| %>
+      <tr>
+        <td><%= hospede.nome %></td>
+        <td><%= hospede.documento %></td>
+        <td><%= hospede.email %></td>
+        <td><%= hospede.telefone %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= link_to "Voltar", "javascript:history.back()" %>

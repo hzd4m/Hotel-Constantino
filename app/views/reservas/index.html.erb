@@ -1,0 +1,29 @@
+<h1>Lista de Reservas</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Hotel</th>
+      <th>Hóspede</th>
+      <th>Check-in</th>
+      <th>Check-out</th>
+      <th>Status</th>
+      <th>Valor Total</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @reservas.each do |reserva| %>
+      <tr>
+        <td><%= reserva.hotel.nome %></td>
+        <td><%= reserva.hospede.nome %></td>
+        <td><%= reserva.data_checkin.strftime("%d/%m/%Y") %></td>
+        <td><%= reserva.data_checkout.strftime("%d/%m/%Y") %></td>
+        <td><%= reserva.status %></td>
+        <td>R$ <%= number_with_precision(reserva.valor_total, precision: 2, separator: ",") %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= link_to "Voltar", "javascript:history.back()" %>
