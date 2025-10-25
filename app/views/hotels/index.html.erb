@@ -1,0 +1,28 @@
+<h1>Lista de Hotéis</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Nome</th>
+      <th>Cidade</th>
+      <th>Endereço</th>
+      <th>Telefone</th>
+      <th>Categoria</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @hotels.each do |hotel| %>
+      <tr>
+        <td><%= hotel.nome %></td>
+        <td><%= hotel.cidade %></td>
+        <td><%= hotel.endereco %></td>
+        <td><%= hotel.telefone %></td>
+        <td><%= hotel.categoria %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= link_to "Voltar", "javascript:history.back()" %>
+

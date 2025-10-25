@@ -1,4 +1,4 @@
-class Hotel < 
+class Hotel < ApplicationRecord
     has_many :reservas 
 
     validates :nome, presence: true
