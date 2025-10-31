@@ -1,0 +1,41 @@
+<%= form_with(model: hotel, local: true) do |form| %>
+  <% if hotel.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(hotel.errors.count, "erro") %> proibiu este hotel de ser salvo:</h2>
+      <ul>
+        <% hotel.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :nome %><br>
+    <%= form.text_field :nome %>
+  </div>
+
+  <div>
+    <%= form.label :cidade %><br>
+    <%= form.text_field :cidade %>
+  </div>
+
+  <div>
+    <%= form.label :endereco %><br>
+    <%= form.text_field :endereco %>
+  </div>
+
+  <div>
+    <%= form.label :telefone %><br>
+    <%= form.text_field :telefone %>
+  </div>
+
+  <div>
+    <%= form.label :categoria %><br>
+    <%= form.text_field :categoria %>
+  </div>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>
