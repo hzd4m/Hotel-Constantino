@@ -1,0 +1,46 @@
+<%= form_with(model: reserva, local: true) do |form| %>
+  <% if reserva.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(reserva.errors.count, "erro") %> proibiu esta reserva de ser salva:</h2>
+      <ul>
+        <% reserva.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :hospede_id, "Hóspede" %><br>
+    <%= form.collection_select :hospede_id, Hospede.all, :id, :nome, prompt: "Selecione o hóspede" %>
+  </div>
+
+  <div>
+    <%= form.label :hotel_id, "Hotel" %><br>
+    <%= form.collection_select :hotel_id, Hotel.all, :id, :nome, prompt: "Selecione o hotel" %>
+  </div>
+
+  <div>
+    <%= form.label :data_checkin %><br>
+    <%= form.date_field :data_checkin %>
+  </div>
+
+  <div>
+    <%= form.label :data_checkout %><br>
+    <%= form.date_field :data_checkout %>
+  </div>
+
+  <div>
+    <%= form.label :status %><br>
+    <%= form.select :status, ["Confirmada", "Pendente", "Cancelada"], prompt: "Selecione o status" %>
+  </div>
+
+  <div>
+    <%= form.label :valor_total %><br>
+    <%= form.number_field :valor_total, step: 0.01 %>
+  </div>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>

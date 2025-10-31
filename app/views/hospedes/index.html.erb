@@ -1,5 +1,36 @@
 <h1>Lista de Hóspedes</h1>
 
+<!-- FORMULÁRIO DE BUSCA -->
+
+<%= form_with url: hospedes_path, method: :get, local: true, data: { turbo: false } do %>
+  <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+    <div>
+      <%= label_tag :nome, "Nome" %><br>
+      <%= text_field_tag :nome, params[:nome] %>
+    </div>
+
+    <div>
+      <%= label_tag :documento, "Documento" %><br>
+      <%= text_field_tag :documento, params[:documento] %>
+    </div>
+
+    <div>
+      <%= label_tag :email, "Email" %><br>
+      <%= text_field_tag :email, params[:email] %>
+    </div>
+  </div>
+
+  <div style="margin-top: 10px;">
+    <%= submit_tag "Pesquisar" %>
+    <%= link_to "Limpar Filtros", hospedes_path, style: "margin-left:10px;" %>
+  </div>
+<% end %>
+
+<br>
+
+<%= link_to 'Novo Hóspede', new_hospede_path %>
+
+<!-- TABELA DE HÓSPEDES -->
 <table>
   <thead>
     <tr>
@@ -7,6 +38,7 @@
       <th>Documento</th>
       <th>Email</th>
       <th>Telefone</th>
+      <th colspan="3">Ações</th>
     </tr>
   </thead>
 
@@ -17,9 +49,20 @@
         <td><%= hospede.documento %></td>
         <td><%= hospede.email %></td>
         <td><%= hospede.telefone %></td>
+        <td><%= link_to 'Mostrar', hospede_path(hospede) %></td>
+        <td><%= link_to 'Editar', edit_hospede_path(hospede) %></td>
+        <td>
+          <%= button_to 'Excluir', hospede_path(hospede), 
+          method: :delete, 
+          form: { onsubmit: "return confirm('Tem certeza que deseja excluir?');" }  %>
+        </td>
       </tr>
     <% end %>
   </tbody>
 </table>
 
-<%= link_to "Voltar", "javascript:history.back()" %>
+<br>
+
+<%= paginate @hospedes %>
+<br>
+<%= link_to "Página inicial", welcome_index_path %>

@@ -1,0 +1,10 @@
+<h1>Detalhes do Hotel</h1>
+
+<p><strong>Nome:</strong> <%= @hotel.nome %></p>
+<p><strong>Cidade:</strong> <%= @hotel.cidade %></p>
+<p><strong>Endereço:</strong> <%= @hotel.endereco %></p>
+<p><strong>Telefone:</strong> <%= @hotel.telefone %></p>
+<p><strong>Categoria:</strong> <%= @hotel.categoria %></p>
+
+<%= link_to 'Editar', edit_hotel_path(@hotel) %> |
+<%= link_to 'Voltar', hotels_path %>
