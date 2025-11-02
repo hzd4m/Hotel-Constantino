@@ -1,0 +1,11 @@
+<h1>Detalhes da Reserva</h1>
+
+<p><strong>Hóspede:</strong> <%= @reserva.hospede.nome %></p>
+<p><strong>Hotel:</strong> <%= @reserva.hotel.nome %></p>
+<p><strong>Check-in:</strong> <%= @reserva.data_checkin %></p>
+<p><strong>Check-out:</strong> <%= @reserva.data_checkout %></p>
+<p><strong>Status:</strong> <%= @reserva.status %></p>
+<p><strong>Valor Total:</strong> <%= number_to_currency(@reserva.valor_total, unit: "R$") %></p>
+
+<%= link_to 'Editar', edit_reserva_path(@reserva) %> |
+<%= link_to 'Voltar', reservas_path %>

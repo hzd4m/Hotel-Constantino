@@ -4,6 +4,8 @@ source "https://rubygems.org"
 gem "rails", "~> 8.0.2", ">= 8.0.2.1"
 gem "mysql2", "~> 0.5"
 gem "devise"
+gem 'kaminari'
+
 
 # The modern asset pipeline for Rails [https://github.com/rails/propshaft]
 gem "propshaft"

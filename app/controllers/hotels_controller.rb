@@ -1,8 +1,17 @@
 class HotelsController < ApplicationController
     before_action :authenticate_user!
+    before_action :set_hotel, only: [:show, :edit, :update, :destroy]
 
   def index
     @hotels = Hotel.all
+    
+    # filtros
+    @hotels = @hotels.where("UPPER(nome) LIKE ?", "%#{params[:nome].upcase}%") if params[:nome].present?
+    @hotels = @hotels.where("UPPER(cidade) LIKE ?", "%#{params[:cidade].upcase}%") if params[:cidade].present?
+    @hotels = @hotels.where("UPPER(categoria) LIKE ?", "%#{params[:categoria].upcase}%") if params[:categoria].present?
+
+    # ordenação e paginação
+    @hotels = @hotels.order(:nome).page(params[:page]).per(10)
   end
 
   def show 

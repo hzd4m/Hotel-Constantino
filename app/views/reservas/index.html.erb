@@ -1,29 +1,80 @@
 <h1>Lista de Reservas</h1>
 
+
+<!-- FORMULÁRIO DE BUSCA -->
+<%= form_with url: reservas_path, method: :get, local: true do %>
+  <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+    <div>
+      <%= label_tag :hospede_nome, "Hóspede" %><br>
+      <%= text_field_tag :hospede_nome, params[:hospede_nome] %>
+    </div>
+
+    <div>
+      <%= label_tag :hotel_nome, "Hotel" %><br>
+      <%= text_field_tag :hotel_nome, params[:hotel_nome] %>
+    </div>
+
+    <div>
+      <%= label_tag :data_checkin, "Check-in a partir de" %><br>
+      <%= date_field_tag :data_checkin, params[:data_checkin] %>
+    </div>
+
+    <div>
+      <%= label_tag :data_checkout, "Check-out até" %><br>
+      <%= date_field_tag :data_checkout, params[:data_checkout] %>
+    </div>
+
+    <div>
+      <%= label_tag :status, "Status" %><br>
+      <%= select_tag :status, options_for_select(['Confirmada', 'Pendente', 'Cancelada'], params[:status]), include_blank: "Todos" %>
+    </div>
+
+  </div>
+
+  <div style="margin-top: 10px;">
+    <%= submit_tag "Pesquisar" %>
+    <%= link_to "Limpar Filtros", reservas_path, style: "margin-left:10px;" %>
+  </div>
+<% end %>
+
+<br>
+
+<%= link_to 'Nova Reserva', new_reserva_path %>
+
 <table>
   <thead>
     <tr>
-      <th>Hotel</th>
       <th>Hóspede</th>
+      <th>Hotel</th>
       <th>Check-in</th>
       <th>Check-out</th>
       <th>Status</th>
       <th>Valor Total</th>
+      <th colspan="3">Ações</th>
     </tr>
   </thead>
 
   <tbody>
     <% @reservas.each do |reserva| %>
       <tr>
-        <td><%= reserva.hotel.nome %></td>
         <td><%= reserva.hospede.nome %></td>
-        <td><%= reserva.data_checkin.strftime("%d/%m/%Y") %></td>
-        <td><%= reserva.data_checkout.strftime("%d/%m/%Y") %></td>
+        <td><%= reserva.hotel.nome %></td>
+        <td><%= reserva.data_checkin %></td>
+        <td><%= reserva.data_checkout %></td>
         <td><%= reserva.status %></td>
-        <td>R$ <%= number_with_precision(reserva.valor_total, precision: 2, separator: ",") %></td>
+        <td><%= number_to_currency(reserva.valor_total, unit: "R$") %></td>
+
+        <td><%= link_to 'Mostrar', reserva_path(reserva) %></td>
+        <td><%= link_to 'Editar', edit_reserva_path(reserva) %></td>
+        <td>
+          <%= button_to 'Excluir', reserva_path(reserva),
+                        method: :delete,
+                        form: { onsubmit: "return confirm('Tem certeza que deseja excluir esta reserva?');" } %>
+        </td>
       </tr>
     <% end %>
   </tbody>
 </table>
-
-<%= link_to "Voltar", "javascript:history.back()" %>
+<%= paginate @reservas %>
+<br>
+<%= link_to "Página inicial", welcome_index_path %>
