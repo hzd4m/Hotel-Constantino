@@ -4,9 +4,9 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
 
-  enum :role, { editor: 0, admin: 1 }
+  enum :role, { hospede: 0, admin: 1 }
 
-  def admin?
-    role == 'admin'
+  def hospede_record
+    @hospede_record ||= Hospede.find_by(email: email)
   end
 end

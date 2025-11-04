@@ -1,0 +1,18 @@
+<% page_obj = local_assigns.fetch(:page, nil) %>
+<% url = local_assigns[:url] %>
+<% remote = local_assigns[:remote] %>
+
+<li class="page-item <%= 'disabled' unless page_obj %>">
+  <% icon = capture do %>
+    <span aria-hidden="true">&laquo;</span>
+    <span class="visually-hidden"><%= t('views.pagination.previous', default: 'Anterior') %></span>
+  <% end %>
+
+  <% if page_obj %>
+    <%= link_to url, class: "page-link", rel: 'prev', aria: { label: t('views.pagination.previous', default: 'Anterior') }, remote: remote do %>
+      <%= icon %>
+    <% end %>
+  <% else %>
+    <span class="page-link" aria-hidden="true">&laquo;</span>
+  <% end %>
+</li>

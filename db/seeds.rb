@@ -2,6 +2,7 @@
 Reserva.destroy_all
 Hospede.destroy_all
 Hotel.destroy_all
+User.destroy_all
 
 # Criar ~15 hotéis
 hotels = Hotel.create!([
@@ -58,4 +59,7 @@ hospedes = Hospede.create!([
   )
 end
 
-puts "Seeds carregados com sucesso! #{Hotel.count} hotéis, #{Hospede.count} hóspedes, #{Reserva.count} reservas."
+User.create!(email: 'admin@hotelconstantino.com', password: '123456', password_confirmation: '123456', role: :admin)
+User.create!(email: 'joao@example.com', password: '123456', password_confirmation: '123456', role: :hospede)
+
+puts "Seeds carregados com sucesso! #{Hotel.count} hotéis, #{Hospede.count} hóspedes, #{Reserva.count} reservas e #{User.count} usuários."

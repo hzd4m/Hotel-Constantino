@@ -1,3 +1,16 @@
-<h1>Editar Hotel</h1>
-<%= render 'form', hotel: @hotel %>
-<%= link_to 'Voltar', hotels_path %>
+<% content_for :title, "Editar hotel" %>
+
+<div class="page-header">
+	<div class="stack-sm">
+		<span class="page-eyebrow"><i class="bi bi-pencil"></i> Atualização</span>
+		<h1 class="page-header__title">Editar hotel</h1>
+		<p class="page-header__subtitle">Revise os dados do hotel para manter o catálogo sempre atualizado.</p>
+	</div>
+	<div class="page-actions">
+		<%= link_to 'Voltar', hotels_path, class: "btn btn-outline-secondary" %>
+	</div>
+</div>
+
+<div class="surface-card surface-card--compact stack-md">
+	<%= render 'form', hotel: @hotel %>
+</div>

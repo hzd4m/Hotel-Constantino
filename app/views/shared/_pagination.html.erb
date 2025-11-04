@@ -1,0 +1,11 @@
+<% page_collection = local_assigns.fetch(:collection, nil) %>
+<% params_hash = local_assigns.fetch(:params, request.query_parameters) %>
+
+<% if page_collection.respond_to?(:any?) && page_collection.any? %>
+  <% total_pages = page_collection.respond_to?(:total_pages) ? page_collection.total_pages : 1 %>
+  <% if total_pages > 1 %>
+    <nav aria-label="Paginação" class="d-flex justify-content-center mt-4">
+      <%= paginate page_collection, theme: 'bootstrap5', params: params_hash %>
+    </nav>
+  <% end %>
+<% end %>

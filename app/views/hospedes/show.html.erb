@@ -1,9 +1,42 @@
-<h1>Detalhes do Hóspede</h1>
+<% content_for :title, "Hóspede: #{@hospede.nome}" %>
 
-<p><strong>Nome:</strong> <%= @hospede.nome %></p>
-<p><strong>Documento:</strong> <%= @hospede.documento %></p>
-<p><strong>Email:</strong> <%= @hospede.email %></p>
-<p><strong>Telefone:</strong> <%= @hospede.telefone %></p>
+<div class="page-header">
+	<div class="stack-sm">
+		<span class="page-eyebrow"><i class="bi bi-person-badge"></i> Perfil</span>
+		<h1 class="page-header__title"><%= @hospede.nome %></h1>
+		<% if @hospede.email.present? %>
+			<p class="page-header__subtitle"><%= @hospede.email %></p>
+		<% end %>
+	</div>
+	<div class="page-actions">
+		<%= link_to 'Editar hóspede', edit_hospede_path(@hospede), class: "btn btn-outline-secondary" %>
+		<%= link_to 'Voltar para lista', hospedes_path, class: "btn btn-gradient" %>
+	</div>
+</div>
 
-<%= link_to 'Editar', edit_hospede_path(@hospede) %> |
-<%= link_to 'Voltar', hospedes_path %>
+<div class="detail-layout">
+	<div class="detail-card">
+		<span class="badge-gradient badge detail-card__badge">Ficha do hóspede</span>
+		<dl class="detail-list">
+			<dt>Documento</dt>
+			<dd><%= @hospede.documento %></dd>
+			<dt>Email</dt>
+			<dd><%= @hospede.email %></dd>
+			<dt>Telefone</dt>
+			<dd><%= @hospede.telefone %></dd>
+		</dl>
+	</div>
+
+	<aside class="action-panel">
+		<span class="action-panel__title">Fluxos rápidos</span>
+		<%= link_to reservas_path(hospede_id: @hospede.id), class: "btn btn-outline-secondary d-flex justify-content-between align-items-center" do %>
+			<span>Ver reservas dele</span>
+			<i class="bi bi-calendar-check"></i>
+		<% end %>
+		<%= link_to new_reserva_path, class: "btn btn-outline-secondary d-flex justify-content-between align-items-center" do %>
+			<span>Gerar nova reserva</span>
+			<i class="bi bi-plus-circle"></i>
+		<% end %>
+		<%= button_to 'Excluir hóspede', hospede_path(@hospede), method: :delete, class: "btn btn-outline-danger w-100", form: { class: "w-100" }, data: { turbo_confirm: 'Tem certeza que deseja excluir?' } %>
+	</aside>
+</div>

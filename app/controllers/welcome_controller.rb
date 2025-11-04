@@ -1,5 +1,5 @@
 class WelcomeController < ApplicationController
-   before_action :authenticate_user!
   def index
+    # nada adicional por ora; página inicial apenas HTML
   end
 end

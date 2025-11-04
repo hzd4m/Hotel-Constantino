@@ -1,3 +1,16 @@
-<h1>Novo Hóspede</h1>
-<%= render 'form', hospede: @hospede %>
-<%= link_to 'Voltar', hospedes_path %>
+<% content_for :title, "Novo hóspede" %>
+
+<div class="page-header">
+	<div class="stack-sm">
+		<span class="page-eyebrow"><i class="bi bi-person-plus"></i> Cadastro</span>
+		<h1 class="page-header__title">Novo hóspede</h1>
+		<p class="page-header__subtitle">Cadastre dados essenciais para personalizar a experiência do viajante.</p>
+	</div>
+	<div class="page-actions">
+		<%= link_to 'Voltar', hospedes_path, class: "btn btn-outline-secondary" %>
+	</div>
+</div>
+
+<div class="surface-card surface-card--compact stack-md">
+	<%= render 'form', hospede: @hospede %>
+</div>

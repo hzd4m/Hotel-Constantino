@@ -1,0 +1,190 @@
+<% content_for :title, (current_user.admin? ? "Painel" : "Área do hóspede") %>
+
+<% if current_user.admin? %>
+  <div class="page-header">
+    <div class="stack-sm">
+      <span class="page-eyebrow"><i class="bi bi-speedometer2"></i> Operação em foco</span>
+      <h1 class="page-header__title">Painel de operações</h1>
+      <p class="page-header__subtitle">Resumo do dia com métricas essenciais, exportações rápidas e o panorama das reservas mais recentes.</p>
+    </div>
+    <div class="page-actions">
+      <%= link_to "Nova reserva", new_reserva_path, class: "btn btn-gradient" %>
+      <%= link_to "Exportar hotéis", "#export-csv", class: "btn btn-outline-secondary" %>
+    </div>
+  </div>
+
+  <div class="dashboard-metrics mb-5">
+    <div class="metric-card">
+      <div class="metric-card-content">
+        <div class="metric-icon"><i class="bi bi-building"></i></div>
+        <p class="text-uppercase small text-muted fw-semibold mb-1">Hotéis ativos</p>
+        <p class="display-6 fw-bold mb-3"><%= @hotels_count %></p>
+        <%= link_to "Gerenciar hotéis", hotels_path, class: "btn btn-link p-0 fw-semibold" %>
+      </div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-card-content">
+        <div class="metric-icon"><i class="bi bi-calendar-check"></i></div>
+        <p class="text-uppercase small text-muted fw-semibold mb-1">Reservas registradas</p>
+        <p class="display-6 fw-bold mb-3"><%= @reservas_count %></p>
+        <%= link_to "Ver reservas", reservas_path, class: "btn btn-link p-0 fw-semibold" %>
+      </div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-card-content">
+        <div class="metric-icon"><i class="bi bi-people"></i></div>
+        <p class="text-uppercase small text-muted fw-semibold mb-1">Hóspedes cadastrados</p>
+        <p class="display-6 fw-bold mb-3"><%= @hospedes_count %></p>
+        <%= link_to "Ver hóspedes", hospedes_path, class: "btn btn-link p-0 fw-semibold" %>
+      </div>
+    </div>
+  </div>
+
+  <div id="export-csv" class="surface-card surface-card--compact stack-md mb-5">
+    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
+      <div class="stack-sm mb-0">
+        <h2 class="h5 fw-semibold mb-0">Exportar hotéis (CSV)</h2>
+        <p class="text-muted mb-0">Selecione ao menos um filtro para gerar um relatório refinado da rede Constantino.</p>
+      </div>
+      <span class="badge-gradient badge align-self-start">Dados instantâneos</span>
+    </div>
+
+    <% if @hotel_filter_cities.any? || @hotel_filter_categories.any? %>
+      <%= form_with url: dashboard_path(format: :csv), method: :get, local: true, data: { turbo: false }, class: "row g-3 align-items-end", id: "csv-export-form" do |form| %>
+        <div class="col-12 col-lg-4">
+          <%= form.label :city, "Cidade", class: "form-label fw-semibold" %>
+          <%= form.select :city,
+                          options_for_select(@hotel_filter_cities.map { |city| [city, city] }, params[:city]),
+                          { include_blank: "Selecione a cidade" },
+                          class: "form-select" %>
+        </div>
+        <div class="col-12 col-lg-4">
+          <%= form.label :category, "Categoria", class: "form-label fw-semibold" %>
+          <%= form.select :category,
+                          options_for_select(@hotel_filter_categories.map { |category| [category, category] }, params[:category]),
+                          { include_blank: "Selecione a categoria" },
+                          class: "form-select" %>
+        </div>
+        <div class="col-12 col-lg-4">
+          <%= form.label :_, "", class: "form-label d-none" %>
+          <%= form.submit "Gerar CSV", class: "btn btn-gradient w-100" %>
+        </div>
+      <% end %>
+      <p class="text-muted small mb-0">Combine cidade e categoria para relatórios mais ricos. Para cruzamentos avançados, utilize o módulo de BI.</p>
+    <% else %>
+      <p class="text-muted mb-0">Cadastre hotéis para liberar a exportação CSV com filtros.</p>
+    <% end %>
+  </div>
+
+  <div class="row g-4 align-items-start">
+    <div class="col-12 col-lg-7">
+      <div class="surface-card surface-card--flush table-card h-100">
+        <div class="table-card__header">
+          <h2 class="table-card__title">Últimas reservas</h2>
+          <%= link_to "Ver todas", reservas_path, class: "btn btn-sm btn-outline-secondary" %>
+        </div>
+        <% if @latest_reservas.present? %>
+          <div class="table-card__body">
+            <div class="table-responsive">
+              <table class="table align-middle">
+                <thead>
+                  <tr>
+                    <th>Hóspede</th>
+                    <th>Hotel</th>
+                    <th>Check-in</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% @latest_reservas.each do |reserva| %>
+                    <tr>
+                      <td>
+                        <div class="d-flex align-items-center gap-3">
+                          <div class="hc-avatar"><%= reserva.hospede.nome.first.upcase %></div>
+                          <div>
+                            <div class="fw-semibold"><%= reserva.hospede.nome %></div>
+                            <div class="text-muted small"><%= reserva.hospede.email %></div>
+                          </div>
+                        </div>
+                      </td>
+                      <td><%= reserva.hotel.nome %></td>
+                      <td><%= l(reserva.data_checkin) %></td>
+                      <td>
+                        <% status_class = case reserva.status
+                          when "confirmada" then "status-chip--success"
+                          when "pendente" then "status-chip--warning"
+                          else "status-chip--default"
+                        end %>
+                        <span class="status-chip <%= status_class %>"><%= reserva.status.titleize %></span>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        <% else %>
+          <div class="empty-state">
+            <div class="empty-state__icon"><i class="bi bi-calendar-minus"></i></div>
+            <p class="mb-0">Nenhuma reserva registrada recentemente.</p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    <div class="col-12 col-lg-5">
+      <div class="action-panel h-100">
+        <span class="action-panel__title">Ações rápidas</span>
+        <%= link_to new_hotel_path, class: "btn btn-outline-secondary d-flex justify-content-between align-items-center" do %>
+          <span>Cadastrar novo hotel</span>
+          <i class="bi bi-arrow-up-right"></i>
+        <% end %>
+        <%= link_to new_hospede_path, class: "btn btn-outline-secondary d-flex justify-content-between align-items-center" do %>
+          <span>Cadastrar hóspede</span>
+          <i class="bi bi-person-plus"></i>
+        <% end %>
+        <%= link_to new_reserva_path, class: "btn btn-outline-secondary d-flex justify-content-between align-items-center" do %>
+          <span>Gerar reserva</span>
+          <i class="bi bi-calendar-plus"></i>
+        <% end %>
+        <button class="btn btn-outline-secondary d-flex justify-content-between align-items-center" disabled>
+          <span>Relatórios (em breve)</span>
+          <i class="bi bi-clock-history"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <%= javascript_tag do %>
+    (function() {
+      function attachHandler() {
+        var form = document.getElementById("csv-export-form");
+        if (!form || form.dataset.enhanced === "true") { return; }
+        form.dataset.enhanced = "true";
+
+        form.addEventListener("submit", function(event) {
+          var cityField = form.querySelector("[name='city']");
+          var categoryField = form.querySelector("[name='category']");
+          var hasCity = cityField && cityField.value.trim() !== "";
+          var hasCategory = categoryField && categoryField.value.trim() !== "";
+
+          if (!hasCity && !hasCategory) {
+            event.preventDefault();
+            alert("Selecione pelo menos um filtro (cidade ou categoria) antes de exportar o CSV.");
+          }
+        });
+      }
+
+      document.addEventListener("turbo:load", attachHandler);
+      document.addEventListener("DOMContentLoaded", attachHandler);
+    })();
+  <% end %>
+<% else %>
+  <div class="surface-card surface-card--compact stack-md">
+    <h1 class="h4 fw-semibold mb-0">Área do hóspede</h1>
+    <p class="text-muted mb-0">Não encontramos um cadastro de hóspede associado ao seu usuário. Entre em contato com nossa equipe para liberar o acesso às reservas.</p>
+    <div class="d-flex flex-wrap gap-3">
+      <%= link_to "Falar com a recepção", "mailto:contato@hotelconstantino.com", class: "btn btn-outline-secondary" %>
+      <%= link_to "Voltar para a página inicial", home_path, class: "btn btn-gradient" %>
+    </div>
+  </div>
+<% end %>

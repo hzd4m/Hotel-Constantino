@@ -1,10 +1,46 @@
-<h1>Detalhes do Hotel</h1>
+<% content_for :title, "Hotel: #{@hotel.nome}" %>
 
-<p><strong>Nome:</strong> <%= @hotel.nome %></p>
-<p><strong>Cidade:</strong> <%= @hotel.cidade %></p>
-<p><strong>Endereço:</strong> <%= @hotel.endereco %></p>
-<p><strong>Telefone:</strong> <%= @hotel.telefone %></p>
-<p><strong>Categoria:</strong> <%= @hotel.categoria %></p>
+<% hotel_subtitle = [@hotel.cidade.presence, @hotel.categoria.presence].compact.join(" • ") %>
 
-<%= link_to 'Editar', edit_hotel_path(@hotel) %> |
-<%= link_to 'Voltar', hotels_path %>
+<div class="page-header">
+	<div class="stack-sm">
+		<span class="page-eyebrow"><i class="bi bi-building"></i> Unidade</span>
+		<h1 class="page-header__title"><%= @hotel.nome %></h1>
+		<% if hotel_subtitle.present? %>
+			<p class="page-header__subtitle"><%= hotel_subtitle %></p>
+		<% end %>
+	</div>
+	<div class="page-actions">
+		<%= link_to 'Editar hotel', edit_hotel_path(@hotel), class: "btn btn-outline-secondary" %>
+		<%= link_to 'Voltar para lista', hotels_path, class: "btn btn-gradient" %>
+	</div>
+</div>
+
+<div class="detail-layout">
+	<div class="detail-card">
+		<span class="badge-gradient badge detail-card__badge">Ficha do hotel</span>
+		<dl class="detail-list">
+			<dt>Cidade</dt>
+			<dd><%= @hotel.cidade %></dd>
+			<dt>Endereço</dt>
+			<dd><%= @hotel.endereco %></dd>
+			<dt>Telefone</dt>
+			<dd><%= @hotel.telefone %></dd>
+			<dt>Categoria</dt>
+			<dd><%= @hotel.categoria %></dd>
+		</dl>
+	</div>
+
+	<aside class="action-panel">
+		<span class="action-panel__title">Fluxos rápidos</span>
+		<%= link_to 'Cadastrar nova reserva', new_reserva_path, class: "btn btn-outline-secondary d-flex justify-content-between align-items-center" do %>
+			<span>Gerar reserva</span>
+			<i class="bi bi-calendar-plus"></i>
+		<% end %>
+		<%= link_to 'Ver hóspedes', hospedes_path, class: "btn btn-outline-secondary d-flex justify-content-between align-items-center" do %>
+			<span>Listar hóspedes</span>
+			<i class="bi bi-people"></i>
+		<% end %>
+		<%= button_to 'Excluir hotel', hotel_path(@hotel), method: :delete, class: "btn btn-outline-danger w-100", form: { class: "w-100" }, data: { turbo_confirm: 'Tem certeza que deseja excluir este hotel?' } %>
+	</aside>
+</div>

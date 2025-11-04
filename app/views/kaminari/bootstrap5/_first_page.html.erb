@@ -1,0 +1,12 @@
+<% page_obj = local_assigns.fetch(:page, nil) %>
+<% url = local_assigns[:url] %>
+<% remote = local_assigns[:remote] %>
+
+<li class="page-item <%= 'disabled' unless page_obj %>">
+  <% label = t('views.pagination.first', default: 'Primeira') %>
+  <% if page_obj %>
+    <%= link_to label, url, class: "page-link", aria: { label: label }, rel: 'first', remote: remote %>
+  <% else %>
+    <span class="page-link" aria-hidden="true"><%= label %></span>
+  <% end %>
+</li>

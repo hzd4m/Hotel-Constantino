@@ -1,0 +1,58 @@
+<% content_for :title, "Minhas reservas" %>
+
+<div class="page-header">
+  <div class="stack-sm">
+    <span class="page-eyebrow"><i class="bi bi-calendar3"></i> Jornada</span>
+    <h1 class="page-header__title">Minhas reservas</h1>
+    <p class="page-header__subtitle">Consulte estadias futuras e passadas no ecossistema Constantino.</p>
+  </div>
+</div>
+
+<div class="surface-card surface-card--flush table-card">
+  <div class="table-card__header">
+    <h2 class="table-card__title">Próximas e recentes</h2>
+  </div>
+  <% if @reservas.any? %>
+    <div class="table-card__body">
+      <div class="table-responsive">
+        <table class="table align-middle">
+          <thead>
+            <tr>
+              <th>Hotel</th>
+              <th>Check-in</th>
+              <th>Check-out</th>
+              <th>Status</th>
+              <th class="text-end">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @reservas.each do |reserva| %>
+              <tr>
+                <td><%= reserva.hotel.nome %></td>
+                <td><%= reserva.data_checkin.present? ? l(reserva.data_checkin) : '-' %></td>
+                <td><%= reserva.data_checkout.present? ? l(reserva.data_checkout) : '-' %></td>
+                <td>
+                  <% status_class = case reserva.status
+                    when "confirmada" then "status-chip--success"
+                    when "pendente" then "status-chip--warning"
+                    else "status-chip--default"
+                  end %>
+                  <span class="status-chip <%= status_class %>"><%= reserva.status.titleize %></span>
+                </td>
+                <td class="text-end">
+                  <%= link_to "Detalhes", guests_reserva_path(reserva), class: "btn btn-outline-secondary btn-sm" %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <% else %>
+    <div class="empty-state">
+      <div class="empty-state__icon"><i class="bi bi-search"></i></div>
+      <p class="mb-1">Nenhuma reserva localizada para o seu usuário.</p>
+      <p class="text-muted small mb-0">Entre em contato com a recepção caso espere encontrar uma reserva aqui.</p>
+    </div>
+  <% end %>
+</div>

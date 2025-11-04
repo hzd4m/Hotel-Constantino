@@ -1,4 +1,4 @@
-# Sprint 2 — Autenticação (Devise) & Autorização Enxuta
+# Sprint 2 — Autenticação (Devise) & Autorização Enxuta OK - ZD4
 
 ## Objetivo
 Proteger o sistema; permitir login.

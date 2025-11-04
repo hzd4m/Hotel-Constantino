@@ -1,6 +1,139 @@
-<h1>Página Inicial</h1>
-<ul>
-<li><%= link_to "Hoteis", hotels_path%></li>
-<li><%= link_to "Hóspedes", hospedes_path%></li>
-<li><%= link_to "Reservas", reservas_path%></li>
-</ul>
+<% content_for :title, "Hotel Constantino" %>
+
+<% hero_stats = [
+    { label: "Destinos", value: "12" },
+    { label: "Avaliação média", value: "4.9" },
+    { label: "Concierge", value: "24h" }
+] %>
+
+<% experience_pillars = [
+    { icon: "door-open", title: "Suítes arejadas", copy: "Design brasileiro, tons claros e iluminação natural para um refúgio sempre acolhedor." },
+    { icon: "chat-dots", title: "Serviço atento", copy: "Equipe e tecnologia trabalham juntas para antecipar necessidades e surpreender com detalhes." },
+    { icon: "phone", title: "Digital sem atrito", copy: "Check-in móvel, chave virtual e concierge on-line em uma jornada verdadeiramente fluida." }
+] %>
+
+<% audience_cards = [
+    { eyebrow: "Para hóspedes", title: "Gerencie sua estadia", copy: "Acompanhe reservas, ajuste preferências e converse com o concierge em instantes.", cta: { text: "Entrar no portal", path: new_user_session_path } },
+    { eyebrow: "Para empresas", title: "Programas corporativos", copy: "Curadoria sob medida para eventos, viagens a trabalho e long stays com faturamento centralizado.", cta: { text: "Fale com o comercial", path: "mailto:corporativo@hotelconstantino.com" } },
+    { eyebrow: "Para equipe", title: "Painel operacional", copy: "Reservas, governança e manutenção em um ambiente único com métricas sempre atualizadas.", cta: { text: "Acessar painel", path: new_user_session_path } }
+] %>
+
+<% editorial_highlights = [
+    { number: "01", title: "Coleções exclusivas", copy: "Cada hotel traz peças de artistas locais, aromas exclusivos e um menu sazonal inspirado na região." },
+    { number: "02", title: "Bem-estar desenhado", copy: "Spa, academia e experiências de mindfulness integrados ao seu cronograma com poucos toques." },
+    { number: "03", title: "Comunidade Constantino", copy: "Benefícios progressivos, upgrades e convites para eventos privados em toda a rede." }
+] %>
+
+<% content_for :full_width do %>
+    <section class="py-5">
+        <div class="container">
+            <div class="surface-card surface-card--flush welcome-hero-panel">
+                <div class="stack-lg justify-content-between">
+                    <div class="stack-md">
+                        <span class="welcome-highlight"><i class="bi bi-stars"></i> Hotelaria autoral</span>
+                        <h1 class="display-5 fw-semibold mb-2">Clareza, conforto e serviço discreto em cada estadia.</h1>
+                        <p class="text-muted">Cenários iluminados, equipe atenciosa e tecnologia sem fricção para que cada momento seja leve.</p>
+                        <div class="d-flex flex-wrap gap-3">
+                            <%= link_to "Reservar estadia", new_user_session_path, class: "btn btn-gradient btn-lg" %>
+                            <%= link_to "Conhecer hotéis", hotels_path, class: "btn btn-outline-secondary btn-lg" %>
+                        </div>
+                    </div>
+                    <div class="welcome-stats-grid">
+                        <% hero_stats.each do |stat| %>
+                            <div class="welcome-stat">
+                                <span class="text-muted text-uppercase small"><%= stat[:label] %></span>
+                                <strong class="display-6 fw-semibold mb-0"><%= stat[:value] %></strong>
+                            </div>
+                        <% end %>
+                    </div>
+                </div>
+                <div class="welcome-hero-media">
+                    <img src="https://images.unsplash.com/photo-1496417263034-38ec4f0b665a?auto=format&fit=crop&w=1600&q=80" alt="Suite luminosa do Hotel Constantino" class="w-100 h-100 object-fit-cover">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5">
+        <div class="container">
+            <div class="surface-card surface-card--compact stack-lg">
+                <div class="stack-sm">
+                    <span class="badge-gradient badge align-self-start">Experiência Constantino</span>
+                    <h2 class="h4 fw-semibold mb-0">A delicadeza está nos detalhes</h2>
+                    <p class="text-muted mb-0">Luz natural, materiais nobres e processos inteligentes criam o cenário perfeito para desconectar ou produzir.</p>
+                </div>
+                <div class="row g-4">
+                    <% experience_pillars.each do |pillar| %>
+                        <div class="col-12 col-md-4">
+                            <div class="surface-card surface-card--flush stack-md h-100">
+                                <div class="feature-icon-pill"><i class="bi bi-<%= pillar[:icon] %>"></i></div>
+                                <h3 class="h5 fw-semibold mb-1"><%= pillar[:title] %></h3>
+                                <p class="text-muted mb-0"><%= pillar[:copy] %></p>
+                            </div>
+                        </div>
+                    <% end %>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5">
+        <div class="container">
+            <div class="surface-card surface-card--flush row g-0 align-items-center">
+                <div class="col-12 col-lg-6">
+                    <div class="welcome-editorial stack-lg p-4 p-lg-5">
+                        <span class="badge-gradient badge align-self-start">Novas coleções</span>
+                        <h2 class="h4 fw-semibold mb-2">Bem-estar com assinatura brasileira</h2>
+                        <p class="text-muted">Das amenidades artesanais aos rituais de spa, cada detalhe foi pensado para quem prefere um ritmo tranquilo e sofisticado.</p>
+                        <div class="stack-sm">
+                            <% editorial_highlights.each do |highlight| %>
+                                <div class="welcome-editorial-item">
+                                    <span class="welcome-editorial-number"><%= highlight[:number] %></span>
+                                    <div>
+                                        <strong class="d-block"><%= highlight[:title] %></strong>
+                                        <span class="text-muted"><%= highlight[:copy] %></span>
+                                    </div>
+                                </div>
+                            <% end %>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-6">
+                    <div class="welcome-editorial-media">
+                        <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1600&q=80" alt="Detalhes de bem-estar do Hotel Constantino" class="w-100 h-100 object-fit-cover">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5">
+        <div class="container">
+            <div class="row g-4">
+                <% audience_cards.each do |card| %>
+                    <div class="col-12 col-lg-4">
+                        <div class="surface-card surface-card--compact stack-md h-100">
+                            <span class="page-eyebrow"><%= card[:eyebrow] %></span>
+                            <h3 class="h5 fw-semibold mb-1"><%= card[:title] %></h3>
+                            <p class="text-muted"><%= card[:copy] %></p>
+                            <%= link_to card[:cta][:text], card[:cta][:path], class: "btn btn-outline-secondary" %>
+                        </div>
+                    </div>
+                <% end %>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5">
+        <div class="container">
+            <div class="surface-card surface-card--compact text-center stack-md">
+                <h2 class="h4 fw-semibold mb-0">Vamos organizar sua próxima viagem?</h2>
+                <p class="text-muted mx-auto" style="max-width: 560px;">Nossa equipe está disponível para criar roteiros personalizados, coordenar amenities especiais e acompanhar cada etapa da reserva.</p>
+                <div class="d-flex flex-wrap justify-content-center gap-3">
+                    <%= link_to "Conversar com o concierge", "mailto:reservas@hotelconstantino.com", class: "btn btn-gradient btn-lg" %>
+                    <%= link_to "Explorar destinos", hotels_path, class: "btn btn-outline-secondary btn-lg" %>
+                </div>
+            </div>
+        </div>
+    </section>
+<% end %>

@@ -1,0 +1,51 @@
+<% content_for :title, "Entrar" %>
+<% content_for :body_class, "auth-body" %>
+
+<% content_for :full_width do %>
+  <section class="auth-wrapper">
+    <div class="surface-card auth-card stack-md">
+      <div class="stack-sm text-center">
+        <span class="welcome-highlight align-self-center"><i class="bi bi-door-open"></i> Acesso restrito</span>
+        <h1 class="h4 fw-semibold mb-0">Bem-vindo de volta</h1>
+        <p class="text-muted mb-0">Use suas credenciais para acessar reservas, dashboards e concierge digital.</p>
+      </div>
+
+      <%= render "devise/shared/error_messages", resource: resource %>
+
+      <%= form_with model: resource, url: session_path(resource_name), class: "stack-md", data: { turbo: false } do |form| %>
+        <div class="stack-sm">
+          <%= form.label :email, class: "form-label text-start" %>
+          <%= form.email_field :email, autofocus: true, autocomplete: "email", class: "form-control" %>
+        </div>
+
+        <div class="stack-sm">
+          <%= form.label :password, class: "form-label text-start" %>
+          <%= form.password_field :password, autocomplete: "current-password", class: "form-control" %>
+        </div>
+
+        <% if devise_mapping.rememberable? || devise_mapping.recoverable? %>
+          <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+            <% if devise_mapping.rememberable? %>
+              <div class="form-check">
+                <%= form.check_box :remember_me, class: "form-check-input" %>
+                <%= form.label :remember_me, "Manter conectado", class: "form-check-label" %>
+              </div>
+            <% end %>
+            <% if devise_mapping.recoverable? %>
+              <%= link_to "Esqueci minha senha", new_password_path(resource_name), class: "text-decoration-none text-muted small" %>
+            <% end %>
+          </div>
+        <% end %>
+
+        <%= form.submit "Entrar", class: "btn btn-gradient w-100" %>
+      <% end %>
+
+      <div class="auth-actions">
+        <span class="text-muted">Ainda não possui conta?</span>
+        <% if devise_mapping.registerable? %>
+          <%= link_to "Criar agora", new_registration_path(resource_name), class: "btn btn-outline-secondary" %>
+        <% end %>
+      </div>
+    </div>
+  </section>
+<% end %>

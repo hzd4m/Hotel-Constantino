@@ -1,36 +1,50 @@
-<%= form_with(model: @hospede) do |form| %>
-  <% if @hospede.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@hospede.errors.count, "erro") %> proibiu o salvamento:</h2>
-      <ul>
-        <% @hospede.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
+<%= form_with(model: hospede, local: true, class: "row g-3 form-grid") do |form| %>
+  <% if hospede.errors.any? %>
+    <div class="col-12">
+      <div class="toast-glow flash-banner flash-banner--danger" role="alert">
+        <h2 class="h5 mb-3"><%= pluralize(hospede.errors.count, "erro") %> impediram o salvamento:</h2>
+        <ul class="mb-0">
+          <% hospede.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
     </div>
   <% end %>
 
-  <div>
-    <%= form.label :nome %>
-    <%= form.text_field :nome %>
+  <div class="col-12 col-md-6">
+    <%= form.label :nome, class: "form-label" %>
+    <%= form.text_field :nome, class: "form-control #{'is-invalid' if form.object.errors[:nome].present?}" %>
+    <% if form.object.errors[:nome].present? %>
+      <div class="invalid-feedback"><%= form.object.errors[:nome].first %></div>
+    <% end %>
   </div>
 
-  <div>
-    <%= form.label :documento %>
-    <%= form.text_field :documento %>
+  <div class="col-12 col-md-6">
+    <%= form.label :documento, class: "form-label" %>
+    <%= form.text_field :documento, class: "form-control #{'is-invalid' if form.object.errors[:documento].present?}" %>
+    <% if form.object.errors[:documento].present? %>
+      <div class="invalid-feedback"><%= form.object.errors[:documento].first %></div>
+    <% end %>
   </div>
 
-  <div>
-    <%= form.label :email %>
-    <%= form.email_field :email %>
+  <div class="col-12 col-md-6">
+    <%= form.label :email, class: "form-label" %>
+    <%= form.email_field :email, class: "form-control #{'is-invalid' if form.object.errors[:email].present?}" %>
+    <% if form.object.errors[:email].present? %>
+      <div class="invalid-feedback"><%= form.object.errors[:email].first %></div>
+    <% end %>
   </div>
 
-  <div>
-    <%= form.label :telefone %>
-    <%= form.text_field :telefone %>
+  <div class="col-12 col-md-6">
+    <%= form.label :telefone, class: "form-label" %>
+    <%= form.text_field :telefone, class: "form-control #{'is-invalid' if form.object.errors[:telefone].present?}" %>
+    <% if form.object.errors[:telefone].present? %>
+      <div class="invalid-feedback"><%= form.object.errors[:telefone].first %></div>
+    <% end %>
   </div>
 
-  <div>
-    <%= form.submit %>
+  <div class="col-12 d-flex justify-content-end">
+    <%= form.submit class: "btn btn-gradient" %>
   </div>
 <% end %>

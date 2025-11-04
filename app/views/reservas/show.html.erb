@@ -1,11 +1,57 @@
-<h1>Detalhes da Reserva</h1>
+<% content_for :title, "Reserva ##{@reserva.id}" %>
 
-<p><strong>Hóspede:</strong> <%= @reserva.hospede.nome %></p>
-<p><strong>Hotel:</strong> <%= @reserva.hotel.nome %></p>
-<p><strong>Check-in:</strong> <%= @reserva.data_checkin %></p>
-<p><strong>Check-out:</strong> <%= @reserva.data_checkout %></p>
-<p><strong>Status:</strong> <%= @reserva.status %></p>
-<p><strong>Valor Total:</strong> <%= number_to_currency(@reserva.valor_total, unit: "R$") %></p>
+<% reserva_subtitle = [@reserva.hospede&.nome, @reserva.hotel&.nome].compact.join(" • ") %>
 
-<%= link_to 'Editar', edit_reserva_path(@reserva) %> |
-<%= link_to 'Voltar', reservas_path %>
+<div class="page-header">
+	<div class="stack-sm">
+		<span class="page-eyebrow"><i class="bi bi-calendar-heart"></i> Estadia</span>
+		<h1 class="page-header__title">Reserva #<%= @reserva.id %></h1>
+		<% if reserva_subtitle.present? %>
+			<p class="page-header__subtitle"><%= reserva_subtitle %></p>
+		<% end %>
+	</div>
+	<div class="page-actions">
+		<%= link_to 'Editar reserva', edit_reserva_path(@reserva), class: "btn btn-outline-secondary" %>
+		<%= link_to 'Voltar para lista', reservas_path, class: "btn btn-gradient" %>
+	</div>
+</div>
+
+<div class="detail-layout">
+	<div class="detail-card">
+		<span class="badge-gradient badge detail-card__badge">Detalhes da estadia</span>
+		<dl class="detail-list">
+			<dt>Hóspede</dt>
+			<dd><%= @reserva.hospede.nome %></dd>
+			<dt>Hotel</dt>
+			<dd><%= @reserva.hotel.nome %></dd>
+			<dt>Check-in</dt>
+			<dd><%= @reserva.data_checkin.present? ? l(@reserva.data_checkin) : '-' %></dd>
+			<dt>Check-out</dt>
+			<dd><%= @reserva.data_checkout.present? ? l(@reserva.data_checkout) : '-' %></dd>
+			<dt>Status</dt>
+			<dd>
+				<% status_class = case @reserva.status
+					when "confirmada" then "status-chip--success"
+					when "pendente" then "status-chip--warning"
+					else "status-chip--default"
+				end %>
+				<span class="status-chip <%= status_class %>"><%= @reserva.status.titleize %></span>
+			</dd>
+			<dt>Valor total</dt>
+			<dd><%= number_to_currency(@reserva.valor_total, unit: "R$", separator: ",", delimiter: ".") %></dd>
+		</dl>
+	</div>
+
+	<aside class="action-panel">
+		<span class="action-panel__title">Fluxos rápidos</span>
+		<%= link_to new_reserva_path, class: "btn btn-outline-secondary d-flex justify-content-between align-items-center" do %>
+			<span>Duplicar reserva</span>
+			<i class="bi bi-files"></i>
+		<% end %>
+		<%= link_to hospede_path(@reserva.hospede), class: "btn btn-outline-secondary d-flex justify-content-between align-items-center" do %>
+			<span>Ver hóspede</span>
+			<i class="bi bi-person"></i>
+		<% end %>
+		<%= button_to 'Cancelar reserva', reserva_path(@reserva), method: :delete, class: "btn btn-outline-danger w-100", form: { class: "w-100" }, data: { turbo_confirm: 'Tem certeza que deseja excluir esta reserva?' } %>
+	</aside>
+</div>

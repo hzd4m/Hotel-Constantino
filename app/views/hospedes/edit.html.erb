@@ -1,3 +1,16 @@
-<h1>Editar Hóspede</h1>
-<%= render 'form', hospede: @hospede %>
-<%= link_to 'Voltar', hospedes_path %>
+<% content_for :title, "Editar hóspede" %>
+
+<div class="page-header">
+	<div class="stack-sm">
+		<span class="page-eyebrow"><i class="bi bi-pencil"></i> Atualização</span>
+		<h1 class="page-header__title">Editar hóspede</h1>
+		<p class="page-header__subtitle">Ajuste dados de contato para manter o relacionamento sempre atualizado.</p>
+	</div>
+	<div class="page-actions">
+		<%= link_to 'Voltar', hospedes_path, class: "btn btn-outline-secondary" %>
+	</div>
+</div>
+
+<div class="surface-card surface-card--compact stack-md">
+	<%= render 'form', hospede: @hospede %>
+</div>

@@ -5,7 +5,17 @@ class ApplicationController < ActionController::Base
   end
 
   def after_sign_in_path_for(resource)
-    authenticated_root_path
+    return authenticated_root_path if resource.respond_to?(:admin?) && resource.admin?
+
+    if resource.respond_to?(:hospede_record) && resource.hospede_record.present?
+      guest_reservas_path
+    else
+      authenticated_root_path
+    end
+  end
+
+  def after_sign_up_path_for(resource)
+    after_sign_in_path_for(resource)
   end
 
   protected

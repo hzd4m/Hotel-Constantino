@@ -1,46 +1,71 @@
-<%= form_with(model: reserva, local: true) do |form| %>
+<%= form_with(model: reserva, local: true, class: "row g-3 form-grid") do |form| %>
   <% if reserva.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(reserva.errors.count, "erro") %> proibiu esta reserva de ser salva:</h2>
-      <ul>
-        <% reserva.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
+    <div class="col-12">
+      <div class="toast-glow flash-banner flash-banner--danger" role="alert">
+        <h2 class="h5 mb-3"><%= pluralize(reserva.errors.count, "erro") %> impediram o salvamento:</h2>
+        <ul class="mb-0">
+          <% reserva.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
     </div>
   <% end %>
 
-  <div>
-    <%= form.label :hospede_id, "Hóspede" %><br>
-    <%= form.collection_select :hospede_id, Hospede.all, :id, :nome, prompt: "Selecione o hóspede" %>
+  <div class="col-12 col-md-6">
+    <% hospede_errors = form.object.errors[:hospede_id].presence || form.object.errors[:hospede] %>
+    <%= form.label :hospede_id, "Hóspede", class: "form-label" %>
+    <%= form.collection_select :hospede_id, Hospede.order(:nome), :id, :nome, { prompt: "Selecione o hóspede" }, class: "form-select #{'is-invalid' if hospede_errors.present?}" %>
+    <% if hospede_errors.present? %>
+      <div class="invalid-feedback"><%= hospede_errors.first %></div>
+    <% end %>
   </div>
 
-  <div>
-    <%= form.label :hotel_id, "Hotel" %><br>
-    <%= form.collection_select :hotel_id, Hotel.all, :id, :nome, prompt: "Selecione o hotel" %>
+  <div class="col-12 col-md-6">
+    <% hotel_errors = form.object.errors[:hotel_id].presence || form.object.errors[:hotel] %>
+    <%= form.label :hotel_id, "Hotel", class: "form-label" %>
+    <%= form.collection_select :hotel_id, Hotel.order(:nome), :id, :nome, { prompt: "Selecione o hotel" }, class: "form-select #{'is-invalid' if hotel_errors.present?}" %>
+    <% if hotel_errors.present? %>
+      <div class="invalid-feedback"><%= hotel_errors.first %></div>
+    <% end %>
   </div>
 
-  <div>
-    <%= form.label :data_checkin %><br>
-    <%= form.date_field :data_checkin %>
+  <div class="col-12 col-md-6">
+    <%= form.label :data_checkin, class: "form-label" %>
+    <%= form.date_field :data_checkin, class: "form-control #{'is-invalid' if form.object.errors[:data_checkin].present?}" %>
+    <% if form.object.errors[:data_checkin].present? %>
+      <div class="invalid-feedback"><%= form.object.errors[:data_checkin].first %></div>
+    <% end %>
   </div>
 
-  <div>
-    <%= form.label :data_checkout %><br>
-    <%= form.date_field :data_checkout %>
+  <div class="col-12 col-md-6">
+    <%= form.label :data_checkout, class: "form-label" %>
+    <%= form.date_field :data_checkout, class: "form-control #{'is-invalid' if form.object.errors[:data_checkout].present?}" %>
+    <% if form.object.errors[:data_checkout].present? %>
+      <div class="invalid-feedback"><%= form.object.errors[:data_checkout].first %></div>
+    <% end %>
   </div>
 
-  <div>
-    <%= form.label :status %><br>
-    <%= form.select :status, ["Confirmada", "Pendente", "Cancelada"], prompt: "Selecione o status" %>
+  <div class="col-12 col-md-6">
+    <%= form.label :status, class: "form-label" %>
+    <%= form.select :status, [["Confirmada", "Confirmada"], ["Pendente", "Pendente"], ["Cancelada", "Cancelada"]], { prompt: "Selecione o status" }, class: "form-select #{'is-invalid' if form.object.errors[:status].present?}" %>
+    <% if form.object.errors[:status].present? %>
+      <div class="invalid-feedback"><%= form.object.errors[:status].first %></div>
+    <% end %>
   </div>
 
-  <div>
-    <%= form.label :valor_total %><br>
-    <%= form.number_field :valor_total, step: 0.01 %>
+  <div class="col-12 col-md-6">
+    <%= form.label :valor_total, class: "form-label" %>
+    <div class="input-group">
+      <span class="input-group-text">R$</span>
+      <%= form.number_field :valor_total, step: 0.01, class: "form-control #{'is-invalid' if form.object.errors[:valor_total].present?}" %>
+    </div>
+    <% if form.object.errors[:valor_total].present? %>
+      <div class="invalid-feedback d-block"><%= form.object.errors[:valor_total].first %></div>
+    <% end %>
   </div>
 
-  <div>
-    <%= form.submit %>
+  <div class="col-12 d-flex justify-content-end">
+    <%= form.submit class: "btn btn-gradient" %>
   </div>
 <% end %>

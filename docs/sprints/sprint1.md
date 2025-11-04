@@ -1,4 +1,4 @@
-# Sprint 1 — Modelagem & Migrations
+# Sprint 1 — Modelagem & Migrations OK - ZD4
 
 ## Objetivo
 Implementar modelos, associações e validações.

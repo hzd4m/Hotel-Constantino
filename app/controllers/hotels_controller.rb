@@ -4,11 +4,22 @@ class HotelsController < ApplicationController
 
   def index
     @hotels = Hotel.all
-    
+
     # filtros
-    @hotels = @hotels.where("UPPER(nome) LIKE ?", "%#{params[:nome].upcase}%") if params[:nome].present?
-    @hotels = @hotels.where("UPPER(cidade) LIKE ?", "%#{params[:cidade].upcase}%") if params[:cidade].present?
-    @hotels = @hotels.where("UPPER(categoria) LIKE ?", "%#{params[:categoria].upcase}%") if params[:categoria].present?
+    filters = sanitized_filters
+    arel_table = Hotel.arel_table
+
+    if filters[:nome].present?
+      @hotels = @hotels.where(arel_table[:nome].matches("%#{filters[:nome]}%"))
+    end
+
+    if filters[:cidade].present?
+      @hotels = @hotels.where(arel_table[:cidade].matches("%#{filters[:cidade]}%"))
+    end
+
+    if filters[:categoria].present?
+      @hotels = @hotels.where(arel_table[:categoria].matches("%#{filters[:categoria]}%"))
+    end
 
     # ordenação e paginação
     @hotels = @hotels.order(:nome).page(params[:page]).per(10)
@@ -55,4 +66,12 @@ class HotelsController < ApplicationController
   def hotel_params 
     params.require(:hotel).permit(:nome, :cidade, :endereco, :telefone, :categoria)
   end 
+
+  def sanitized_filters
+    {
+      nome: params[:nome].to_s.strip,
+      cidade: params[:cidade].to_s.strip,
+      categoria: params[:categoria].to_s.strip
+    }
+  end
 end

@@ -1,0 +1,14 @@
+<% page_obj = local_assigns.fetch(:page, nil) %>
+<% url = local_assigns[:url] %>
+<% remote = local_assigns[:remote] %>
+
+<li class="page-item <%= 'active' if page_obj&.current? %>" aria-current="<%= 'page' if page_obj&.current? %>">
+  <% link_options = { class: "page-link" }
+     link_options[:rel] = page_obj.rel if page_obj.respond_to?(:rel) && page_obj.rel.present?
+     link_options[:remote] = true if remote %>
+  <% if page_obj&.current? %>
+    <span class="page-link"><%= page_obj %></span>
+  <% else %>
+    <%= link_to page_obj, url, link_options %>
+  <% end %>
+</li>
