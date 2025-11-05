@@ -44,6 +44,12 @@ body {
 	min-height: 100vh;
 }
 
+img,
+video {
+	max-width: 100%;
+	height: auto;
+}
+
 .app-shell {
 	background: var(--hc-color-body);
 }
@@ -498,10 +504,13 @@ body {
 
 .table-card__body {
 	padding: 0 1.75rem 1.75rem;
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
 }
 
 .table-card__body .table {
 	margin-bottom: 0;
+	min-width: 540px;
 }
 
 .table-card__body .table thead th {
@@ -1153,6 +1162,16 @@ body {
 	gap: 0.5rem;
 }
 
+.dashboard-export__field .btn-group {
+	display: inline-flex;
+	flex-wrap: wrap;
+}
+
+.dashboard-export__field .btn-group > .btn,
+.dashboard-export__field .btn-group > label.btn {
+	flex: 1 1 auto;
+}
+
 .dashboard-export__label {
 	font-size: 0.75rem;
 	text-transform: uppercase;
@@ -1554,43 +1573,38 @@ body {
 	.hc-nav-links {
 		display: none;
 	}
-	.hc-nav-actions .btn-gradient {
-		display: none;
-	}
 	.hc-hamburger {
 		display: inline-flex;
 	}
-	.filters-card__actions {
-		justify-content: stretch;
-	}
-	.filters-card__actions .btn {
-		flex: 1 1 auto;
-		min-width: unset;
+	.hc-nav-actions .btn-gradient {
+		display: none;
 	}
 	.filters-card__actions {
-		justify-content: stretch;
-	}
-
-	.filters-card__actions .btn {
-		flex: 1 1 auto;
-		min-width: unset;
-	}
-
-	.filters-card__actions {
+		flex-direction: column;
+		align-items: stretch;
 		justify-content: flex-start;
+		gap: 0.75rem;
 	}
-
 	.filters-card__actions .btn {
 		flex: 1 1 auto;
-		min-width: unset;
+		min-width: 0;
+		width: 100%;
 	}
-
 	.dashboard-export__actions {
 		flex-direction: column;
 		align-items: stretch;
+		gap: 0.75rem;
 	}
 	.dashboard-export__actions .btn {
 		width: 100%;
+		min-width: 0;
+	}
+	.table-actions {
+		justify-content: stretch;
+	}
+	.table-actions .btn {
+		flex: 1 1 calc(50% - 0.5rem);
+		min-width: 0;
 	}
 	.table-card table td .btn {
 		width: 100%;
@@ -1598,6 +1612,105 @@ body {
 	}
 	.app-footer__inner {
 		grid-template-columns: 1fr;
+	}
+}
+
+@media (max-width: 767px) {
+	.hc-navbar {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 0.75rem;
+		padding-block: 0.75rem;
+	}
+	.hc-navbar-tag {
+		padding: 0.25rem 0.5rem;
+		font-size: 0.7rem;
+	}
+	.hc-navbar > .d-flex {
+		width: 100%;
+		justify-content: space-between;
+	}
+	.hc-nav-actions {
+		width: 100%;
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		gap: 0.75rem;
+		row-gap: 0.5rem;
+		align-items: center;
+	}
+	.hc-nav-actions > .btn {
+		grid-column: 1 / 2;
+		width: 100%;
+	}
+	.hc-nav-actions > .btn + .btn {
+		margin-top: 0.25rem;
+	}
+	.hc-nav-actions > .hc-hamburger {
+		grid-column: 2 / 3;
+		grid-row: 1 / span 2;
+		justify-self: end;
+	}
+	.page-header {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 1.5rem;
+	}
+	.page-actions {
+		width: 100%;
+		justify-content: stretch;
+	}
+	.page-actions .btn {
+		flex: 1 1 auto;
+		width: 100%;
+	}
+	.table-card__header {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 1rem;
+	}
+	.table-card__header .btn,
+	.table-card__header .table-card__toolbar {
+		width: 100%;
+	}
+	.table-card__header .table-card__toolbar {
+		justify-content: flex-start;
+	}
+	.table-card__body {
+		padding: 0 1.25rem 1.25rem;
+	}
+	.dashboard-export__header {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 1rem;
+	}
+	.dashboard-export__field .btn-group {
+		gap: 0.5rem;
+		width: 100%;
+	}
+	.dashboard-export__field .btn-group > .btn,
+	.dashboard-export__field .btn-group > label.btn {
+		flex: 1 1 100%;
+		margin-left: 0;
+		min-width: 0;
+	}
+	.hc-hero {
+		padding: 2.5rem 1.5rem;
+	}
+	.hc-hero-stats {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 1rem;
+	}
+	.hc-hero-stat {
+		width: 100%;
+	}
+	.metric-card,
+	.surface-card,
+	.hc-glass-panel {
+		padding: 1.5rem;
+	}
+	.table-actions .btn {
+		flex: 1 1 100%;
 	}
 }
 
@@ -1643,6 +1756,15 @@ body {
 	.export-controls__select {
 		width: 100%;
 		min-width: 0;
+	}
+	.export-controls__row .btn-group {
+		display: flex;
+		gap: 0.5rem;
+		width: 100%;
+	}
+	.export-controls__row .btn-group .btn {
+		flex: 1 1 50%;
+		margin-left: 0;
 	}
 	.app-pagination__link,
 	.app-pagination__link.is-active,
