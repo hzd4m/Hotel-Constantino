@@ -1,0 +1,60 @@
+<% content_for :title, "Quartos" %>
+
+<div class="page-header">
+  <div class="stack-sm">
+    <span class="page-eyebrow"><i class="bi bi-building"></i> Hotel <%= @hotel.nome %></span>
+    <h1 class="page-header__title">Quartos deste hotel</h1>
+    <p class="page-header__subtitle">Monitore disponibilidade, manutenção e alocações.</p>
+  </div>
+  <div class="page-actions">
+    <%= link_to hotel_path(@hotel), class: "btn btn-outline-secondary" do %>
+      <i class="bi bi-arrow-left"></i> Voltar
+    <% end %>
+    <%= link_to new_hotel_quarto_path(@hotel), class: "btn btn-gradient" do %>
+      <i class="bi bi-plus"></i> Novo quarto
+    <% end %>
+  </div>
+</div>
+
+<div class="surface-card surface-card--flush table-card">
+  <% if @quartos.any? %>
+    <div class="table-responsive">
+      <table class="table align-middle">
+        <thead>
+          <tr>
+            <th>Número</th>
+            <th>Tipo</th>
+            <th>Capacidade</th>
+            <th>Status</th>
+            <th class="text-end">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @quartos.each do |quarto| %>
+            <tr>
+              <td><%= link_to quarto.numero, hotel_quarto_path(@hotel, quarto) %></td>
+              <td><%= quarto.room_type&.nome || "-" %></td>
+              <td><%= quarto.capacidade %> hóspedes</td>
+              <td><span class="status-chip <%= status_chip_for_room(quarto) %>"><%= quarto.status_label %></span></td>
+              <td class="text-end">
+                <%= link_to edit_hotel_quarto_path(@hotel, quarto), class: "btn btn-outline-secondary btn-sm" do %>
+                  <i class="bi bi-pencil"></i>
+                <% end %>
+                <%= button_to hotel_quarto_path(@hotel, quarto), method: :delete, data: { turbo_confirm: "Remover este quarto?" }, class: "btn btn-outline-danger btn-sm" do %>
+                  <i class="bi bi-trash"></i>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+    <%= render "shared/pagination", collection: @quartos %>
+  <% else %>
+    <div class="empty-state">
+      <div class="empty-state__icon"><i class="bi bi-door-closed"></i></div>
+      <p class="mb-2">Nenhum quarto cadastrado para este hotel.</p>
+      <%= link_to "Adicionar quarto", new_hotel_quarto_path(@hotel), class: "btn btn-gradient" %>
+    </div>
+  <% end %>
+</div>

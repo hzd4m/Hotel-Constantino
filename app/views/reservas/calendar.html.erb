@@ -1,0 +1,153 @@
+<% content_for :title, "Calendário de ocupação" %>
+
+<div class="page-header">
+  <div class="stack-sm">
+    <span class="page-eyebrow"><i class="bi bi-calendar-range"></i> Operações</span>
+    <h1 class="page-header__title">Calendário de ocupação</h1>
+    <p class="page-header__subtitle">Visualize rapidamente as estadias confirmadas em cada hotel e organize a equipe entre visão mensal ou semanal.</p>
+  </div>
+  <div class="page-actions">
+    <%= link_to reservas_path, class: "btn btn-outline-secondary d-flex align-items-center gap-2" do %>
+      <i class="bi bi-arrow-left"></i>
+      <span>Voltar para reservas</span>
+    <% end %>
+  </div>
+</div>
+
+<% if @hotels.blank? %>
+  <div class="empty-state">
+    <div class="empty-state__icon"><i class="bi bi-buildings"></i></div>
+    <p class="mb-2">Cadastre ao menos um hotel para liberar o calendário de ocupação.</p>
+    <%= link_to "Cadastrar hotel", new_hotel_path, class: "btn btn-gradient" %>
+  </div>
+<% else %>
+  <div class="surface-card surface-card--compact stack-md mb-4">
+    <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3">
+      <div>
+        <span class="page-eyebrow d-inline-flex align-items-center gap-2"><i class="bi bi-building"></i> Hotel selecionado</span>
+        <h2 class="h5 mb-1"><%= @selected_hotel&.nome %></h2>
+        <p class="text-muted mb-0"><%= @period_label %></p>
+      </div>
+      <div class="d-flex flex-wrap gap-2 align-items-center">
+        <% if @prev_params.present? %>
+          <%= link_to calendar_reservas_path(@prev_params), class: "btn btn-outline-secondary d-inline-flex align-items-center gap-2" do %>
+            <i class="bi bi-chevron-left"></i>
+            <span>Anterior</span>
+          <% end %>
+        <% end %>
+        <%= link_to calendar_reservas_path(view: @view_mode, hotel_id: @selected_hotel&.id), class: "btn btn-outline-secondary d-inline-flex align-items-center gap-2" do %>
+          <i class="bi bi-pin-map"></i>
+          <span>Hoje</span>
+        <% end %>
+        <% if @next_params.present? %>
+          <%= link_to calendar_reservas_path(@next_params), class: "btn btn-outline-secondary d-inline-flex align-items-center gap-2" do %>
+            <span>Próximo</span>
+            <i class="bi bi-chevron-right"></i>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+
+    <%= form_with url: calendar_reservas_path, scope: nil, method: :get, local: true, class: "row g-3 align-items-end" do |form| %>
+      <div class="col-12 col-md-4">
+        <%= form.label :hotel_id, "Hotel", class: "form-label" %>
+        <%= form.select :hotel_id, options_from_collection_for_select(@hotels, :id, :nome, @selected_hotel&.id), {}, class: "form-select" %>
+      </div>
+      <div class="col-12 col-md-4">
+        <%= form.label :view, "Visualização", class: "form-label" %>
+        <%= form.select :view, options_for_select([["Mensal", "monthly"], ["Semanal", "weekly"]], @view_mode), {}, class: "form-select" %>
+      </div>
+      <%= form.hidden_field :start_date, value: @current_start_date_param %>
+      <div class="col-12 col-md-4 text-md-end">
+        <%= form.submit "Atualizar visão", class: "btn btn-gradient" %>
+      </div>
+    <% end %>
+
+    <div class="calendar-stats row g-3">
+      <div class="col-12 col-sm-4">
+        <div class="calendar-stat">
+          <span class="calendar-stat__label">Reservas no período</span>
+          <span class="calendar-stat__value"><%= @reservations_count %></span>
+        </div>
+      </div>
+      <div class="col-12 col-sm-4">
+        <div class="calendar-stat">
+          <span class="calendar-stat__label">Ocupação média diária</span>
+          <span class="calendar-stat__value"><%= @average_daily_occupancy %></span>
+        </div>
+      </div>
+      <div class="col-12 col-sm-4">
+        <div class="calendar-stat">
+          <span class="calendar-stat__label">Pico de ocupação</span>
+          <span class="calendar-stat__value"><%= @peak_occupancy %></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="calendar-grid surface-card surface-card--compact">
+    <div class="table-responsive">
+      <table class="calendar-table">
+        <thead>
+          <tr>
+            <% @weekday_labels.each do |label| %>
+              <th scope="col"><%= label %></th>
+            <% end %>
+          </tr>
+        </thead>
+        <tbody>
+          <% @calendar_weeks.each do |week| %>
+            <tr>
+              <% week.each do |day| %>
+                <td>
+                  <div class="calendar-day <%= 'is-outside' unless day[:primary_period] %>">
+                    <div class="calendar-day__header">
+                      <span class="calendar-day__date"><%= day[:date].day %></span>
+                      <% if day[:reservations].any? %>
+                        <span class="calendar-day__badge"><%= day[:reservations].size %> <%= day[:reservations].size == 1 ? 'reserva' : 'reservas' %></span>
+                      <% end %>
+                    </div>
+                    <div class="calendar-day__body">
+                      <% if day[:reservations].empty? %>
+                        <p class="text-muted small mb-0">Sem estadias</p>
+                      <% else %>
+                        <% day[:reservations].each do |reserva| %>
+                          <% hospede_nome = reserva.hospede&.nome || "Hóspede" %>
+                          <% status_key = reserva.status.to_s %>
+                          <% status_class = case status_key
+                            when "checked_in" then "is-active"
+                            when "checked_out" then "is-complete"
+                            when "cancelada" then "is-cancelled"
+                            when "confirmada" then "is-confirmed"
+                            else "is-pending"
+                          end %>
+                          <% chip_class = case status_key
+                            when "reservada" then "status-chip--warning"
+                            when "confirmada", "checked_in" then "status-chip--success"
+                            when "checked_out" then "status-chip--default"
+                            when "cancelada" then "status-chip--danger"
+                            else "status-chip--default"
+                          end %>
+                          <%= link_to reserva_path(reserva), class: "calendar-reservation #{status_class}" do %>
+                            <span class="calendar-reservation__guest"><%= hospede_nome %></span>
+                            <span class="calendar-reservation__status status-chip <%= chip_class %>"><%= reserva.status.titleize %></span>
+                            <span class="calendar-reservation__meta">
+                              Check-in <%= l(reserva.data_checkin, format: :short) %>
+                              <% if reserva.data_checkout.present? %>
+                                | Check-out <%= l(reserva.data_checkout, format: :short) %>
+                              <% end %>
+                            </span>
+                          <% end %>
+                        <% end %>
+                      <% end %>
+                    </div>
+                  </div>
+                </td>
+              <% end %>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<% end %>

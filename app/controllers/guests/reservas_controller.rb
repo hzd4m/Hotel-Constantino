@@ -9,7 +9,10 @@ module Guests
       @reservas = @hospede.reservas.includes(:hotel).order(data_checkin: :asc)
     end
 
-    def show; end
+    def show
+      @consumptions = @reserva.consumptions.order(requested_at: :desc)
+      @timeline_entries = @reserva.timeline_entries
+    end
 
     private
 

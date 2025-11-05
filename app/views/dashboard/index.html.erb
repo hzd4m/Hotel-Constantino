@@ -40,6 +40,128 @@
     </div>
   </div>
 
+  <div class="surface-card surface-card--compact stack-md mb-5">
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-start align-items-lg-center gap-3">
+      <div>
+        <h2 class="h5 mb-1">Visibilidade operacional</h2>
+        <p class="text-muted mb-0">Sinalizamos reservas que precisam de ação da equipe enquanto usamos a verificação demo (código 0000).</p>
+      </div>
+      <div class="d-flex flex-wrap gap-2">
+        <span class="badge bg-warning-subtle text-warning">Telefone pendente: <%= @reservas_sem_verificacao_count %></span>
+        <span class="badge bg-info-subtle text-info">Prontas para confirmar: <%= @reservas_prontas_confirmacao_count %></span>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-12 col-lg-6">
+        <div class="surface-card surface-card--flush table-card h-100">
+          <div class="table-card__header">
+            <div>
+              <span class="page-eyebrow d-inline-flex align-items-center gap-2"><i class="bi bi-exclamation-circle"></i> Aguardando verificação</span>
+              <h3 class="table-card__title">Telefone ainda não confirmado</h3>
+            </div>
+            <%= link_to "Abrir CRM", incompletas_reservas_path(anchor: "verificacao"), class: "btn btn-sm btn-outline-secondary" %>
+          </div>
+          <% if @reservas_sem_verificacao.any? %>
+            <div class="table-card__body">
+              <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                  <thead>
+                    <tr>
+                      <th>Hóspede</th>
+                      <th>Telefone</th>
+                      <th>Criada em</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% @reservas_sem_verificacao.each do |reserva| %>
+                      <tr>
+                        <td>
+                          <div class="d-flex align-items-center gap-2">
+                            <div class="hc-avatar"><%= reserva.hospede.nome.first.upcase %></div>
+                            <div>
+                              <div class="fw-semibold"><%= reserva.hospede.nome %></div>
+                              <div class="text-muted small"><%= reserva.hospede.email %></div>
+                            </div>
+                          </div>
+                        </td>
+                        <td><%= reserva.hospede.telefone %></td>
+                        <td><%= l(reserva.created_at, format: :short) %></td>
+                      </tr>
+                    <% end %>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          <% else %>
+            <div class="empty-state mb-0">
+              <div class="empty-state__icon"><i class="bi bi-check-circle"></i></div>
+              <p class="mb-0">Nenhuma reserva aguardando verificação de telefone.</p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+      <div class="col-12 col-lg-6">
+        <div class="surface-card surface-card--flush table-card h-100">
+          <div class="table-card__header">
+            <div>
+              <span class="page-eyebrow d-inline-flex align-items-center gap-2"><i class="bi bi-patch-check"></i> Prontas para confirmar</span>
+              <h3 class="table-card__title">Esperando ação da equipe</h3>
+            </div>
+            <%= link_to "Abrir CRM", incompletas_reservas_path(anchor: "confirmar"), class: "btn btn-sm btn-outline-secondary" %>
+          </div>
+          <% if @reservas_prontas_confirmacao.any? %>
+            <div class="table-card__body">
+              <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                  <thead>
+                    <tr>
+                      <th>Hóspede</th>
+                      <th>Hotel</th>
+                      <th>Check-in</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% @reservas_prontas_confirmacao.each do |reserva| %>
+                      <tr>
+                        <td>
+                          <div class="d-flex align-items-center gap-2">
+                            <div class="hc-avatar"><%= reserva.hospede.nome.first.upcase %></div>
+                            <div>
+                              <div class="fw-semibold"><%= reserva.hospede.nome %></div>
+                              <div class="text-muted small">Verificado em <%= l(reserva.hospede.phone_verified_at, format: :short) %></div>
+                            </div>
+                          </div>
+                        </td>
+                        <td><%= reserva.hotel.nome %></td>
+                        <td><%= l(reserva.data_checkin) %></td>
+                        <td class="text-end">
+                          <%= button_to confirmar_reserva_path(reserva), method: :post, class: "btn btn-sm btn-gradient" do %>
+                            Confirmar
+                          <% end %>
+                        </td>
+                      </tr>
+                    <% end %>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          <% else %>
+            <div class="empty-state mb-0">
+              <div class="empty-state__icon"><i class="bi bi-emoji-smile"></i></div>
+              <p class="mb-0">Nenhuma reserva aguardando confirmação final.</p>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-end">
+    <%= link_to "Ver painel CRM completo", incompletas_reservas_path, class: "btn btn-outline-secondary" %>
+    </div>
+  </div>
+
   <div id="export-hub" class="dashboard-export surface-card surface-card--compact stack-md mb-5">
     <div class="dashboard-export__header">
       <div class="stack-sm mb-0">
@@ -180,6 +302,139 @@
     <p class="text-muted small mb-0">Escolha "Todos os registros" para gerar relatórios completos sem filtros.</p>
   </div>
 
+  <div class="row g-4 align-items-start mb-5">
+    <div class="col-12 col-xl-7">
+      <div class="surface-card surface-card--compact stack-md h-100">
+        <div>
+          <span class="page-eyebrow d-inline-flex align-items-center gap-2"><i class="bi bi-door-open"></i> Estadias em andamento</span>
+          <h2 class="h5 mb-0">Check-ins ativos</h2>
+        </div>
+        <% if @active_stays.any? %>
+          <ul class="list-group">
+            <% @active_stays.each do |reserva| %>
+              <li class="list-group-item d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <div class="d-flex align-items-center gap-3">
+                  <div class="hc-avatar"><%= reserva.hospede.nome.first.upcase %></div>
+                  <div>
+                    <div class="fw-semibold"><%= reserva.hospede.nome %></div>
+                    <div class="text-muted small">
+                      No <%= reserva.hotel.nome %> — check-in em <%= l(reserva.check_in_at || reserva.data_checkin, format: :short) %>
+                    </div>
+                  </div>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                  <% since_label = reserva.check_in_at.present? ? l(reserva.check_in_at, format: :short) : "Horário não informado" %>
+                  <span class="badge bg-info-subtle text-info">Desde <%= since_label %></span>
+                  <%= link_to "Detalhes", reserva_path(reserva), class: "btn btn-sm btn-outline-secondary" %>
+                </div>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <div class="empty-state mb-0">
+            <div class="empty-state__icon"><i class="bi bi-door-closed"></i></div>
+            <p class="mb-0">Nenhum hóspede marcado como em estadia no momento.</p>
+          </div>
+        <% end %>
+        <hr class="my-3">
+        <div>
+          <span class="page-eyebrow d-inline-flex align-items-center gap-2"><i class="bi bi-hourglass-split"></i> Próximas operações</span>
+          <h3 class="h6 mb-0">Reservas aguardando ação</h3>
+        </div>
+        <% if @awaiting_operations.any? %>
+          <div class="table-responsive">
+            <table class="table table-sm align-middle mb-0">
+              <thead>
+                <tr>
+                  <th>Hóspede</th>
+                  <th>Hotel</th>
+                  <th>Check-in previsto</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @awaiting_operations.each do |reserva| %>
+                  <tr>
+                    <td>
+                      <div class="fw-semibold"><%= reserva.hospede.nome %></div>
+                      <div class="text-muted small"><%= reserva.hospede.telefone %></div>
+                    </td>
+                    <td><%= reserva.hotel.nome %></td>
+                    <td><%= l(reserva.data_checkin) %></td>
+                    <td class="text-end">
+                      <% if reserva.can_be_confirmed? %>
+                        <%= button_to confirmar_reserva_path(reserva), method: :post, class: "btn btn-sm btn-gradient" do %>
+                          Confirmar
+                        <% end %>
+                      <% else %>
+                        <%= link_to "Ver detalhes", reserva_path(reserva), class: "btn btn-sm btn-outline-secondary" %>
+                      <% end %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        <% else %>
+          <div class="empty-state mb-0">
+            <div class="empty-state__icon"><i class="bi bi-emoji-smile"></i></div>
+            <p class="mb-0">Nenhuma reserva pendente de operação imediata.</p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    <div class="col-12 col-xl-5">
+      <div class="surface-card surface-card--compact stack-md h-100">
+        <div>
+          <span class="page-eyebrow d-inline-flex align-items-center gap-2"><i class="bi bi-activity"></i> Linha do tempo operacional</span>
+          <h2 class="h5 mb-0">Eventos recentes</h2>
+          <p class="text-muted mb-0">Atualizações registradas nas últimas reservas.</p>
+        </div>
+        <% if @operations_timeline.any? %>
+          <ul class="timeline-list mt-2">
+            <% @operations_timeline.each do |event| %>
+              <% reserva = event.reserva %>
+              <li class="timeline-list__item d-flex align-items-start gap-3 py-2 border-bottom">
+                <span class="timeline-icon text-primary"><i class="bi <%= event.icon_name %>"></i></span>
+                <div>
+                  <div class="d-flex flex-wrap gap-2 align-items-center">
+                    <strong><%= event.human_label %></strong>
+                    <% if evento_time = event.timestamp %>
+                      <small class="text-muted"><%= l(evento_time, format: :short) %></small>
+                    <% end %>
+                  </div>
+                  <% if event.details_message.present? %>
+                    <small class="d-block text-muted"><%= event.details_message %></small>
+                  <% end %>
+                  <% if reserva.present? %>
+                    <% hospede = reserva.hospede %>
+                    <% hotel = reserva.hotel %>
+                    <small class="d-block text-muted">
+                      Reserva #<%= reserva.id %>
+                      <% if hospede.present? %>
+                        • <%= hospede.nome %>
+                      <% end %>
+                      <% if hotel.present? %>
+                        @ <%= hotel.nome %>
+                      <% end %>
+                    </small>
+                  <% else %>
+                    <small class="d-block text-muted">Reserva removida</small>
+                  <% end %>
+                </div>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <div class="empty-state mb-0">
+            <div class="empty-state__icon"><i class="bi bi-infinity"></i></div>
+            <p class="mb-0">Ainda não há eventos registrados no histórico.</p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
   <div class="row g-4 align-items-start">
     <div class="col-12 col-lg-7">
       <div class="surface-card surface-card--flush table-card h-100">
@@ -219,8 +474,8 @@
                       <td><%= l(reserva.data_checkin) %></td>
                       <td>
                         <% status_class = case reserva.status
+                          when "reservada" then "status-chip--warning"
                           when "confirmada" then "status-chip--success"
-                          when "pendente" then "status-chip--warning"
                           when "cancelada" then "status-chip--danger"
                           else "status-chip--default"
                         end %>

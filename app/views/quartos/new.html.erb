@@ -1,0 +1,17 @@
+<% content_for :title, "Novo quarto" %>
+
+<div class="page-header">
+  <div class="stack-sm">
+    <span class="page-eyebrow"><i class="bi bi-plus-circle"></i> Hotel <%= @hotel.nome %></span>
+    <h1 class="page-header__title">Cadastrar quarto</h1>
+  </div>
+  <div class="page-actions">
+    <%= link_to hotel_quartos_path(@hotel), class: "btn btn-outline-secondary" do %>
+      <i class="bi bi-arrow-left"></i> Voltar
+    <% end %>
+  </div>
+</div>
+
+<div class="surface-card surface-card--compact">
+  <%= render "form", hotel: @hotel, quarto: @quarto %>
+</div>

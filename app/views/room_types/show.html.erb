@@ -1,0 +1,50 @@
+<% content_for :title, @room_type.nome %>
+
+<div class="page-header">
+  <div class="stack-sm">
+    <span class="page-eyebrow"><i class="bi bi-door-open"></i> Hotel <%= @hotel.nome %></span>
+    <h1 class="page-header__title"><%= @room_type.nome %></h1>
+    <% if @room_type.descricao.present? %>
+      <p class="page-header__subtitle"><%= @room_type.descricao %></p>
+    <% end %>
+  </div>
+  <div class="page-actions">
+    <%= link_to hotel_room_types_path(@hotel), class: "btn btn-outline-secondary" do %>
+      <i class="bi bi-arrow-left"></i> Voltar
+    <% end %>
+    <%= link_to edit_hotel_room_type_path(@hotel, @room_type), class: "btn btn-gradient" do %>
+      <i class="bi bi-pencil"></i> Editar
+    <% end %>
+  </div>
+</div>
+
+<div class="detail-layout">
+  <div class="detail-card">
+    <span class="badge-gradient badge detail-card__badge">Detalhes</span>
+    <dl class="detail-list">
+      <dt>Valor base</dt>
+      <dd><%= number_to_currency(@room_type.price_cents / 100.0, unit: "R$", separator: ",", delimiter: ".") %></dd>
+      <dt>Comodidades</dt>
+      <dd>
+        <% if @room_type.amenities_list.any? %>
+          <%= @room_type.amenities_list.join(", ") %>
+        <% else %>
+          <span class="text-muted">Não informado</span>
+        <% end %>
+      </dd>
+      <dt>Criado em</dt>
+      <dd><%= l(@room_type.created_at, format: :short) %></dd>
+    </dl>
+  </div>
+
+  <aside class="action-panel">
+    <span class="action-panel__title">Ações rápidas</span>
+    <%= link_to new_hotel_quarto_path(@hotel, quarto: { room_type_id: @room_type.id }), class: "btn btn-outline-secondary d-flex justify-content-between align-items-center" do %>
+      <span>Cadastrar quarto</span>
+      <i class="bi bi-box-arrow-up-right"></i>
+    <% end %>
+    <%= button_to hotel_room_type_path(@hotel, @room_type), method: :delete, data: { turbo_confirm: "Remover tipo?" }, class: "btn btn-outline-danger w-100" do %>
+      Excluir tipo
+    <% end %>
+  </aside>
+</div>

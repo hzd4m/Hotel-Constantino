@@ -24,11 +24,68 @@
     <dt>Status</dt>
     <dd>
       <% status_class = case @reserva.status
+        when "reservada" then "status-chip--warning"
         when "confirmada" then "status-chip--success"
-        when "pendente" then "status-chip--warning"
+        when "cancelada" then "status-chip--danger"
         else "status-chip--default"
       end %>
       <span class="status-chip <%= status_class %>"><%= @reserva.status.titleize %></span>
+      <% if @reserva.reservada? %>
+        <small class="d-block text-muted mt-1">Nossa equipe confirmará em breve. Garanta que seus dados estejam corretos.</small>
+      <% elsif @reserva.checked_in? && @reserva.check_in_at.present? %>
+        <small class="d-block text-muted mt-1">Check-in realizado em <%= l(@reserva.check_in_at, format: :short) %>.</small>
+      <% elsif @reserva.checked_out? && @reserva.check_out_at.present? %>
+        <small class="d-block text-muted mt-1">Check-out concluído em <%= l(@reserva.check_out_at, format: :short) %>.</small>
+      <% end %>
     </dd>
   </dl>
+</div>
+
+<div class="detail-card mt-4">
+  <span class="badge-gradient badge detail-card__badge">Linha do tempo</span>
+  <% if @timeline_entries.present? %>
+    <ul class="timeline-list mt-3">
+      <% @timeline_entries.each do |entry| %>
+        <% icon_name = entry[:icon].presence || "bi-activity" %>
+        <li class="timeline-list__item d-flex gap-3 align-items-start py-2 border-bottom">
+          <span class="timeline-icon text-primary"><i class="bi <%= icon_name %>"></i></span>
+          <div>
+            <strong><%= entry[:label] %></strong>
+            <% if entry[:timestamp].present? %>
+              <small class="d-block text-muted"><%= l(entry[:timestamp], format: :short) %></small>
+            <% end %>
+            <% if entry[:details].present? %>
+              <small class="d-block text-muted"><%= entry[:details] %></small>
+            <% end %>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p class="text-muted mb-0">Ainda não há eventos registrados.</p>
+  <% end %>
+</div>
+
+<div class="detail-card mt-4">
+  <span class="badge-gradient badge detail-card__badge">Consumos solicitados</span>
+  <% if @consumptions.any? %>
+    <ul class="list-group mt-3">
+      <% @consumptions.each do |consumption| %>
+        <li class="list-group-item d-flex flex-column align-items-start">
+          <div class="d-flex w-100 justify-content-between">
+            <strong><%= consumption.title %></strong>
+            <span class="badge bg-light text-dark"><%= consumption.status.titleize %></span>
+          </div>
+          <% if consumption.notes.present? %>
+            <small class="text-muted"><%= consumption.notes %></small>
+          <% end %>
+          <small class="text-muted mt-1">
+            Solicitado por <%= consumption.requested_by_guest? ? "você" : "nossa equipe" %> em <%= l(consumption.requested_at, format: :short) %>
+          </small>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p class="text-muted mb-0">Nenhuma solicitação foi registrada para esta estadia.</p>
+  <% end %>
 </div>

@@ -1,13 +1,18 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  nome: MyString
-  documento: MyString
-  email: MyString
-  telefone: MyString
+verified:
+  nome: Joao Verificado
+  documento: 00000000001
+  email: verified@example.com
+  telefone: +5511999999999
+  phone_verification_code: "0000"
+  phone_verification_sent_at: <%= 2.days.ago %>
+  phone_verified_at: <%= 1.day.ago %>
 
-two:
-  nome: MyString
-  documento: MyString
-  email: MyString
-  telefone: MyString
+pending:
+  nome: Maria Pendente
+  documento: 00000000002
+  email: pending@example.com
+  telefone: +5511888888888
+  phone_verification_code: "0000"
+  phone_verification_sent_at: <%= 1.day.ago %>

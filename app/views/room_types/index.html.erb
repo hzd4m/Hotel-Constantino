@@ -1,0 +1,64 @@
+<% content_for :title, "Tipos de quarto" %>
+
+<div class="page-header">
+  <div class="stack-sm">
+    <span class="page-eyebrow"><i class="bi bi-door-closed"></i> Hotel <%= @hotel.nome %></span>
+    <h1 class="page-header__title">Tipos de quarto</h1>
+    <p class="page-header__subtitle">Defina categorias e comodidades para organizar a oferta de quartos.</p>
+  </div>
+  <div class="page-actions">
+    <%= link_to hotel_path(@hotel), class: "btn btn-outline-secondary" do %>
+      <i class="bi bi-arrow-left"></i> Voltar
+    <% end %>
+    <%= link_to new_hotel_room_type_path(@hotel), class: "btn btn-gradient" do %>
+      <i class="bi bi-plus"></i> Novo tipo
+    <% end %>
+  </div>
+</div>
+
+<div class="surface-card surface-card--flush table-card">
+  <% if @room_types.any? %>
+    <div class="table-responsive">
+      <table class="table align-middle">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Valor base</th>
+            <th>Comodidades</th>
+            <th class="text-end">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @room_types.each do |room_type| %>
+            <tr>
+              <td><%= link_to room_type.nome, hotel_room_type_path(@hotel, room_type) %></td>
+              <td><%= number_to_currency(room_type.price_cents / 100.0, unit: "R$", separator: ",", delimiter: ".") %></td>
+              <td>
+                <% if room_type.amenities_list.any? %>
+                  <span class="badge bg-light text-dark"><%= room_type.amenities_list.join(", ") %></span>
+                <% else %>
+                  <span class="text-muted">Sem comodidades listadas</span>
+                <% end %>
+              </td>
+              <td class="text-end">
+                <%= link_to edit_hotel_room_type_path(@hotel, room_type), class: "btn btn-outline-secondary btn-sm" do %>
+                  <i class="bi bi-pencil"></i>
+                <% end %>
+                <%= button_to hotel_room_type_path(@hotel, room_type), method: :delete, data: { turbo_confirm: "Remover este tipo?" }, class: "btn btn-outline-danger btn-sm" do %>
+                  <i class="bi bi-trash"></i>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+    <%= render "shared/pagination", collection: @room_types %>
+  <% else %>
+    <div class="empty-state">
+      <div class="empty-state__icon"><i class="bi bi-collection"></i></div>
+      <p class="mb-2">Nenhum tipo cadastrado para este hotel.</p>
+      <%= link_to "Adicionar tipo", new_hotel_room_type_path(@hotel), class: "btn btn-gradient" %>
+    </div>
+  <% end %>
+</div>

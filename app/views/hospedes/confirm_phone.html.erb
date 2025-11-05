@@ -1,0 +1,43 @@
+<% content_for :title, "Confirmar telefone" %>
+
+<div class="page-header">
+  <div class="stack-sm">
+    <span class="page-eyebrow"><i class="bi bi-shield-check"></i> Verificação</span>
+    <h1 class="page-header__title">Confirmar telefone do hóspede</h1>
+    <p class="page-header__subtitle">Informe o código recebido pelo hóspede para concluir a verificação.</p>
+  </div>
+  <div class="page-actions">
+    <%= link_to 'Voltar para o perfil', hospede_path(@hospede), class: "btn btn-outline-secondary" %>
+  </div>
+</div>
+
+<div class="surface-card surface-card--compact stack-md">
+  <% if flash[:alert].present? %>
+    <div class="toast-glow flash-banner flash-banner--danger" role="alert">
+      <p class="mb-0"><%= flash[:alert] %></p>
+    </div>
+  <% end %>
+
+  <div>
+    <h2 class="h5 mb-3">Resumo do hóspede</h2>
+    <ul class="list-unstyled mb-0">
+      <li><strong>Nome:</strong> <%= @hospede.nome %></li>
+      <li><strong>Telefone:</strong> <%= @hospede.telefone %></li>
+      <li><strong>Status:</strong> <%= @hospede.phone_verified? ? 'Verificado' : 'Pendente' %></li>
+    </ul>
+  </div>
+
+  <div>
+    <h2 class="h5 mb-3">Insira o código de verificação</h2>
+    <%= form_with url: verify_phone_hospede_path(@hospede), method: :post, local: true, class: "row g-3" do |form| %>
+      <div class="col-12 col-md-6">
+        <%= form.label :verification_code, 'Código', class: "form-label" %>
+        <%= form.text_field :verification_code, autofocus: true, class: "form-control" %>
+      </div>
+      <div class="col-12">
+        <%= form.submit 'Confirmar telefone', class: "btn btn-gradient" %>
+      </div>
+    <% end %>
+    <p class="text-muted small mb-0">Ambiente demo: utilize o código <code><%= @demo_code %></code>.</p>
+  </div>
+</div>

@@ -1,0 +1,17 @@
+<% content_for :title, "Editar tipo de quarto" %>
+
+<div class="page-header">
+  <div class="stack-sm">
+    <span class="page-eyebrow"><i class="bi bi-pencil-square"></i> Hotel <%= @hotel.nome %></span>
+    <h1 class="page-header__title">Editar tipo de quarto</h1>
+  </div>
+  <div class="page-actions">
+    <%= link_to hotel_room_type_path(@hotel, @room_type), class: "btn btn-outline-secondary" do %>
+      <i class="bi bi-arrow-left"></i> Voltar
+    <% end %>
+  </div>
+</div>
+
+<div class="surface-card surface-card--compact">
+  <%= render "form", hotel: @hotel, room_type: @room_type %>
+</div>

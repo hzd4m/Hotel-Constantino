@@ -1,27 +1,27 @@
 <% content_for :title, "Hotel Constantino" %>
 
 <% hero_stats = [
-    { label: "Destinos", value: "12" },
-    { label: "Avaliação média", value: "4.9" },
-    { label: "Concierge", value: "24h" }
+    { label: "Destinos assinados", value: "12" },
+    { label: "Hóspedes encantados", value: "4.9/5" },
+    { label: "Concierge dedicado", value: "24h" }
 ] %>
 
 <% experience_pillars = [
-    { icon: "door-open", title: "Suítes arejadas", copy: "Design brasileiro, tons claros e iluminação natural para um refúgio sempre acolhedor." },
-    { icon: "chat-dots", title: "Serviço atento", copy: "Equipe e tecnologia trabalham juntas para antecipar necessidades e surpreender com detalhes." },
-    { icon: "phone", title: "Digital sem atrito", copy: "Check-in móvel, chave virtual e concierge on-line em uma jornada verdadeiramente fluida." }
+    { icon: "door-open", title: "Suítes de assinatura", copy: "Design brasileiro, tecidos naturais e obras exclusivas para despertar sensações em cada ambiente." },
+    { icon: "chat-dots", title: "Hospitalidade com alma", copy: "Equipe curadora que antecipa desejos, mima com detalhes e transforma pedidos em memórias." },
+    { icon: "phone", title: "Tecnologia que abraça", copy: "Check-in fluido, chave virtual e concierge on-line que acompanham você em cada momento da jornada." }
 ] %>
 
 <% audience_cards = [
-    { eyebrow: "Para hóspedes", title: "Gerencie sua estadia", copy: "Acompanhe reservas, ajuste preferências e converse com o concierge em instantes.", cta: { text: "Entrar no portal", path: new_user_session_path } },
-    { eyebrow: "Para empresas", title: "Programas corporativos", copy: "Curadoria sob medida para eventos, viagens a trabalho e long stays com faturamento centralizado.", cta: { text: "Fale com o comercial", path: "mailto:corporativo@hotelconstantino.com" } },
-    { eyebrow: "Para equipe", title: "Painel operacional", copy: "Reservas, governança e manutenção em um ambiente único com métricas sempre atualizadas.", cta: { text: "Acessar painel", path: new_user_session_path } }
+    { eyebrow: "Para hóspedes", title: "Seu portal de encantamento", copy: "Acompanhe cada detalhe da estadia, personalize preferências e converse com o concierge em segundos.", cta: { text: "Entrar no portal", path: new_user_session_path } },
+    { eyebrow: "Para empresas", title: "Hospitalidade corporativa", copy: "Programas sob medida para eventos, viagens a trabalho e long stays com curadoria, relatórios e faturamento centralizado.", cta: { text: "Fale com o comercial", path: "mailto:corporativo@hotelconstantino.com" } },
+    { eyebrow: "Para equipe", title: "Inteligência operacional", copy: "Reservas, governança e manutenção em um painel vivo, com métricas acionáveis e comunicação instantânea.", cta: { text: "Acessar painel", path: new_user_session_path } }
 ] %>
 
 <% editorial_highlights = [
-    { number: "01", title: "Coleções exclusivas", copy: "Cada hotel traz peças de artistas locais, aromas exclusivos e um menu sazonal inspirado na região." },
-    { number: "02", title: "Bem-estar desenhado", copy: "Spa, academia e experiências de mindfulness integrados ao seu cronograma com poucos toques." },
-    { number: "03", title: "Comunidade Constantino", copy: "Benefícios progressivos, upgrades e convites para eventos privados em toda a rede." }
+    { number: "01", title: "Coleções exclusivas", copy: "Cada hotel celebra artistas locais, aromas autorais e menus que traduzem a alma de cada destino." },
+    { number: "02", title: "Bem-estar inteiro", copy: "Spa sensorial, academia imersiva e experiências de mindfulness que se ajustam ao seu ritmo." },
+    { number: "03", title: "Comunidade Constantino", copy: "Benefícios progressivos, upgrades generosos e convites para eventos intimistas em toda a rede." }
 ] %>
 
 <% content_for :full_width do %>
@@ -31,11 +31,11 @@
                 <div class="stack-lg justify-content-between">
                     <div class="stack-md">
                         <span class="welcome-highlight"><i class="bi bi-stars"></i> Hotelaria autoral</span>
-                        <h1 class="display-5 fw-semibold mb-2">Clareza, conforto e serviço discreto em cada estadia.</h1>
-                        <p class="text-muted">Cenários iluminados, equipe atenciosa e tecnologia sem fricção para que cada momento seja leve.</p>
+                        <h1 class="display-5 fw-semibold mb-2">Onde o luxo silencioso encontra a sensibilidade brasileira.</h1>
+                        <p class="text-muted">Suites banhadas de luz, serviço que entende o não dito e tecnologia que desaparece para deixar apenas o encantamento.</p>
                         <div class="d-flex flex-wrap gap-3">
-                            <%= link_to "Reservar estadia", new_user_session_path, class: "btn btn-gradient btn-lg" %>
-                            <%= link_to "Conhecer hotéis", hotels_path, class: "btn btn-outline-secondary btn-lg" %>
+                            <%= link_to "Agendar estadia", new_user_session_path, class: "btn btn-gradient btn-lg" %>
+                            <%= link_to "Conhecer a coleção", hotels_path, class: "btn btn-outline-secondary btn-lg" %>
                         </div>
                     </div>
                     <div class="welcome-stats-grid">
@@ -60,8 +60,8 @@
                 <div class="welcome-experience__intro stack-md">
                     <span class="welcome-eyebrow">Experiência Constantino</span>
                     <div class="stack-sm">
-                        <h2 class="h4 fw-semibold mb-0">A delicadeza está nos detalhes</h2>
-                        <p class="text-muted mb-0">Luz natural, materiais nobres e processos inteligentes criam o cenário perfeito para desconectar ou produzir.</p>
+                        <h2 class="h4 fw-semibold mb-0">Detalhes que despertam todos os sentidos</h2>
+                        <p class="text-muted mb-0">Dos lençóis ao aroma do lobby, cada escolha revela cuidado para que você se sinta inspirado, protegido e livre.</p>
                     </div>
                 </div>
                 <div class="welcome-experience__grid">
@@ -84,7 +84,7 @@
                     <span class="welcome-eyebrow">Novas coleções</span>
                     <div class="stack-sm">
                         <h2 class="h4 fw-semibold mb-0">Bem-estar com assinatura brasileira</h2>
-                        <p class="text-muted mb-0">Das amenidades artesanais aos rituais de spa, cada detalhe foi pensado para quem prefere um ritmo tranquilo e sofisticado.</p>
+                        <p class="text-muted mb-0">Das amenidades artesanais aos rituais de spa ao entardecer, tudo foi desenhado para quem busca um ritmo sereno e sofisticado.</p>
                     </div>
                     <div class="welcome-editorial-list">
                         <% editorial_highlights.each do |highlight| %>
@@ -125,8 +125,8 @@
             <div class="welcome-cta surface-card surface-card--flush">
                 <div class="welcome-cta__content stack-md">
                     <span class="badge-gradient badge align-self-start">Concierge Constantino</span>
-                    <h2 class="h4 fw-semibold mb-0">Vamos organizar sua próxima viagem?</h2>
-                    <p class="text-muted mb-0">Nossa equipe está disponível para criar roteiros personalizados, coordenar amenities especiais e acompanhar cada etapa da reserva.</p>
+                    <h2 class="h4 fw-semibold mb-0">Pronto para viver seu próximo capítulo Constantino?</h2>
+                    <p class="text-muted mb-0">Criamos roteiros sob medida, coordenamos amenities especiais e acompanhamos cada detalhe antes, durante e depois da sua estadia.</p>
                 </div>
                 <div class="welcome-cta__actions d-flex flex-wrap gap-3">
                     <%= link_to "Conversar com o concierge", "mailto:reservas@hotelconstantino.com", class: "btn btn-gradient btn-lg" %>

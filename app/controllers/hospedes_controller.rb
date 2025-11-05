@@ -2,7 +2,7 @@ require "csv"
 
 class HospedesController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_hospede, only: [:show, :edit, :update, :destroy]
+  before_action :set_hospede, only: [:show, :edit, :update, :destroy, :confirm_phone, :verify_phone]
   before_action :require_admin!, only: [:export]
 
   def index
@@ -44,9 +44,9 @@ class HospedesController < ApplicationController
   def create 
     @hospede = Hospede.new(hospede_params)
     if @hospede.save
-        redirect_to @hospede, notice: 'Hóspede criado com sucesso.'
+        redirect_to confirm_phone_hospede_path(@hospede), notice: 'Hóspede criado com sucesso. Confirme o telefone com o código demo 0000.'
     else 
-        render :new 
+        render :new, status: :unprocessable_entity
     end 
   end 
   
@@ -58,7 +58,7 @@ class HospedesController < ApplicationController
     if @hospede.update(hospede_params) 
         redirect_to @hospede, notice: 'Hóspede atualizado com sucesso.' 
     else 
-        render :new 
+    render :edit, status: :unprocessable_entity
     end 
 end 
 
@@ -66,6 +66,22 @@ end
     @hospede.destroy 
     redirect_to hospedes_path, notice: 'Hóspede excluído com sucesso.'
    end 
+
+    def confirm_phone
+      return redirect_to(@hospede, notice: 'Telefone já verificado.') if @hospede.phone_verified?
+
+      @demo_code = Rails.configuration.x.phone_verification.demo_code
+    end
+
+    def verify_phone
+      if @hospede.verify_phone!(params[:verification_code])
+        redirect_to @hospede, notice: 'Telefone verificado com sucesso.'
+      else
+        @demo_code = Rails.configuration.x.phone_verification.demo_code
+        flash.now[:alert] = 'Código inválido. Utilize 0000 enquanto estamos no MVP.'
+        render :confirm_phone, status: :unprocessable_entity
+      end
+    end
 
   private
 

@@ -31,14 +31,49 @@
 			<dt>Status</dt>
 			<dd>
 				<% status_class = case @reserva.status
+					when "reservada" then "status-chip--warning"
 					when "confirmada" then "status-chip--success"
-					when "pendente" then "status-chip--warning"
+					when "cancelada" then "status-chip--danger"
 					else "status-chip--default"
 				end %>
 				<span class="status-chip <%= status_class %>"><%= @reserva.status.titleize %></span>
+				<% if @reserva.reservada? %>
+					<small class="d-block text-muted mt-1">Aguardando confirmação da equipe. Garanta que o telefone esteja verificado.</small>
+				<% elsif @reserva.checked_in? && @reserva.check_in_at.present? %>
+					<small class="d-block text-muted mt-1">Hóspede em estadia desde <%= l(@reserva.check_in_at, format: :short) %>.</small>
+				<% elsif @reserva.checked_out? && @reserva.check_out_at.present? %>
+					<small class="d-block text-muted mt-1">Hospedagem encerrada em <%= l(@reserva.check_out_at, format: :short) %>.</small>
+				<% end %>
+			</dd>
+			<dt>Quartos atribuídos</dt>
+			<dd><%= @reserva.assigned_quartos_label %></dd>
+			<dt>Telefone verificado</dt>
+			<dd>
+				<% if @reserva.hospede.phone_verified? %>
+					<span class="badge bg-success-subtle text-success">Sim, desde <%= l(@reserva.hospede.phone_verified_at, format: :short) %></span>
+				<% else %>
+					<span class="badge bg-warning-subtle text-warning">Pendente - lembre o hóspede de usar o código 0000</span>
+				<% end %>
 			</dd>
 			<dt>Valor total</dt>
 			<dd><%= number_to_currency(@reserva.valor_total, unit: "R$", separator: ",", delimiter: ".") %></dd>
+			<% if @reserva.confirmada? && @reserva.confirmed_at.present? %>
+				<dt>Confirmada em</dt>
+				<dd>
+					<%= l(@reserva.confirmed_at, format: :short) %>
+					<% if @reserva.confirmed_by.present? %>
+						<span class="text-muted small d-block">Por <%= @reserva.confirmed_by.email %></span>
+					<% end %>
+				</dd>
+			<% end %>
+			<% if @reserva.check_in_at.present? %>
+				<dt>Check-in registrado</dt>
+				<dd><%= l(@reserva.check_in_at, format: :short) %></dd>
+			<% end %>
+			<% if @reserva.check_out_at.present? %>
+				<dt>Check-out registrado</dt>
+				<dd><%= l(@reserva.check_out_at, format: :short) %></dd>
+			<% end %>
 		</dl>
 	</div>
 
@@ -52,6 +87,137 @@
 			<span>Ver hóspede</span>
 			<i class="bi bi-person"></i>
 		<% end %>
+		<% if @reserva.can_be_confirmed? %>
+			<%= button_to confirmar_reserva_path(@reserva), method: :post, class: "btn btn-gradient w-100 d-flex justify-content-between align-items-center" do %>
+				<span>Confirmar reserva agora</span>
+				<i class="bi bi-patch-check"></i>
+			<% end %>
+		<% elsif @reserva.reservada? && !@reserva.hospede.phone_verified? %>
+			<%= link_to confirm_phone_hospede_path(@reserva.hospede), class: "btn btn-outline-secondary d-flex justify-content-between align-items-center" do %>
+				<span>Monitorar verificação</span>
+				<i class="bi bi-shield-check"></i>
+			<% end %>
+		<% end %>
+		<% if @reserva.can_check_in? %>
+			<%= button_to check_in_reserva_path(@reserva), method: :post, class: "btn btn-outline-secondary w-100 d-flex justify-content-between align-items-center" do %>
+				<span>Registrar check-in</span>
+				<i class="bi bi-door-open"></i>
+			<% end %>
+		<% end %>
+		<% if @reserva.can_check_out? %>
+			<%= button_to check_out_reserva_path(@reserva), method: :post, class: "btn btn-outline-secondary w-100 d-flex justify-content-between align-items-center" do %>
+				<span>Registrar check-out</span>
+				<i class="bi bi-door-closed"></i>
+			<% end %>
+		<% end %>
 		<%= button_to 'Cancelar reserva', reserva_path(@reserva), method: :delete, class: "btn btn-outline-danger w-100", form: { class: "w-100" }, data: { turbo_confirm: 'Tem certeza que deseja excluir esta reserva?' } %>
 	</aside>
+</div>
+
+<div class="stack-lg mt-4">
+	<div class="detail-card">
+		<span class="badge-gradient badge detail-card__badge">Linha do tempo</span>
+		<% if @timeline_entries.present? %>
+			<ul class="timeline-list mt-3">
+				<% @timeline_entries.each do |entry| %>
+					<% icon_name = entry[:icon].presence || "bi-activity" %>
+					<li class="timeline-list__item d-flex gap-3 align-items-start py-2 border-bottom">
+						<span class="timeline-icon text-primary"><i class="bi <%= icon_name %>"></i></span>
+						<div>
+							<strong><%= entry[:label] %></strong>
+							<% if entry[:timestamp].present? %>
+								<small class="d-block text-muted"><%= l(entry[:timestamp], format: :short) %></small>
+							<% end %>
+							<% if entry[:details].present? %>
+								<small class="d-block text-muted"><%= entry[:details] %></small>
+							<% end %>
+						</div>
+					</li>
+				<% end %>
+			</ul>
+		<% else %>
+			<p class="text-muted mb-0">Nenhuma movimentação registrada.</p>
+		<% end %>
+	</div>
+
+	<div class="detail-card">
+		<span class="badge-gradient badge detail-card__badge">Consumos e solicitações</span>
+		<% if @consumptions.any? %>
+			<div class="table-responsive mt-3">
+				<table class="table table-sm align-middle">
+					<thead>
+						<tr>
+							<th>Título</th>
+							<th>Status</th>
+							<th>Origem</th>
+							<th>Solicitado em</th>
+							<th class="text-end">Atualizar</th>
+						</tr>
+					</thead>
+					<tbody>
+						<% @consumptions.each do |consumption| %>
+							<tr>
+								<td>
+									<strong><%= consumption.title %></strong>
+									<% if consumption.notes.present? %>
+										<small class="d-block text-muted"><%= consumption.notes %></small>
+									<% end %>
+								</td>
+								<td><span class="badge bg-light text-dark"><%= consumption.status.titleize %></span></td>
+								<td><%= consumption.requested_by_guest? ? "Hóspede" : "Equipe" %></td>
+								<td><%= consumption.requested_at.present? ? l(consumption.requested_at, format: :short) : "-" %></td>
+								<td class="text-end">
+									<%= form_with model: consumption, url: consumption_reserva_path(@reserva, consumption_id: consumption.id), method: :patch, class: "d-inline-block", local: true do |f| %>
+										<div class="input-group input-group-sm">
+											<%= f.select :status, Consumption.statuses.keys.map { |s| [s.titleize, s] }, {}, class: "form-select" %>
+											<button type="submit" class="btn btn-outline-secondary">Atualizar</button>
+										</div>
+									<% end %>
+								</td>
+							</tr>
+						<% end %>
+					</tbody>
+				</table>
+			</div>
+		<% else %>
+			<p class="text-muted">Nenhuma solicitação registrada.</p>
+		<% end %>
+
+		<div class="mt-4">
+			<h3 class="h6 mb-3">Registrar novo consumo</h3>
+			<% if @new_consumption.errors.any? %>
+				<div class="alert alert-danger">
+					<p class="mb-1"><strong>Não foi possível salvar:</strong></p>
+					<ul class="mb-0">
+						<% @new_consumption.errors.full_messages.each do |message| %>
+							<li><%= message %></li>
+						<% end %>
+					</ul>
+				</div>
+			<% end %>
+			<%= form_with model: @new_consumption, url: consumptions_reserva_path(@reserva), local: true do |f| %>
+				<div class="row g-3">
+					<div class="col-md-4">
+						<%= f.label :title, "Título", class: "form-label" %>
+						<%= f.text_field :title, class: "form-control", required: true %>
+					</div>
+					<div class="col-md-2">
+						<%= f.label :amount, "Valor (R$)", class: "form-label" %>
+						<%= f.number_field :amount, class: "form-control", step: 0.01, min: 0 %>
+					</div>
+					<div class="col-md-3">
+						<%= f.label :requested_by, "Solicitado por", class: "form-label" %>
+						<%= f.select :requested_by, [["Equipe", "staff"], ["Hóspede", "guest"]], {}, class: "form-select" %>
+					</div>
+					<div class="col-12">
+						<%= f.label :notes, "Observações", class: "form-label" %>
+						<%= f.text_area :notes, class: "form-control", rows: 2 %>
+					</div>
+				</div>
+				<div class="mt-3 d-flex justify-content-end">
+					<%= f.submit "Registrar consumo", class: "btn btn-gradient" %>
+				</div>
+			<% end %>
+		</div>
+	</div>
 </div>

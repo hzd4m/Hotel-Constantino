@@ -1,0 +1,19 @@
+suite_master:
+  hotel: downtown
+  nome: Suite Master
+  descricao: Suite espacosa com sala integrada
+  price_cents: 45000
+  amenities:
+    - Wi-Fi
+    - Cafe da manha
+    - Banheira
+
+ocean_deluxe:
+  hotel: seaside
+  nome: Deluxe Vista Mar
+  descricao: Quarto com sacada para o mar
+  price_cents: 38000
+  amenities:
+    - Wi-Fi
+    - Piscina aquecida
+    - Room service

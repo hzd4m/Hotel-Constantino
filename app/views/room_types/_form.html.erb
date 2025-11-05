@@ -1,0 +1,36 @@
+<%= form_with(model: [@hotel, @room_type], local: true) do |form| %>
+  <% if @room_type.errors.any? %>
+    <div class="alert alert-danger">
+      <p class="mb-1"><strong>Não foi possível salvar:</strong></p>
+      <ul class="mb-0">
+        <% @room_type.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row g-3">
+    <div class="col-md-6">
+      <%= form.label :nome, "Nome", class: "form-label" %>
+      <%= form.text_field :nome, class: "form-control" %>
+    </div>
+    <div class="col-md-6">
+      <%= form.label :price_cents, "Valor base (R$)", class: "form-label" %>
+      <%= form.number_field :price_cents, class: "form-control", min: 0, step: 100 %>
+    </div>
+    <div class="col-12">
+      <%= form.label :descricao, "Descrição", class: "form-label" %>
+      <%= form.text_area :descricao, class: "form-control", rows: 3 %>
+    </div>
+    <div class="col-12">
+      <%= form.label :amenities, "Comodidades (separe por vírgula)", class: "form-label" %>
+      <%= form.text_field :amenities, value: @room_type.amenities_list.join(", "), class: "form-control" %>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-end gap-2 mt-4">
+    <%= link_to "Cancelar", hotel_room_types_path(@hotel), class: "btn btn-outline-secondary" %>
+    <%= form.submit class: "btn btn-gradient" %>
+  </div>
+<% end %>

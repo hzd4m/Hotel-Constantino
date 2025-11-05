@@ -21,7 +21,8 @@ O desenvolvimento é organizado em sprints enxutas, documentadas em `/docs/sprin
 
 - Ruby 3.0+
 - Rails 7.0+
-- SQLite (padrão do Rails, configurado em `database.yml`)
+- SQLite (ambiente local)
+- PostgreSQL (produção na Render via `DATABASE_URL`)
 - Gems principais: devise, kaminari, bootstrap, prawn, csv
 
 ## Como Rodar Localmente
@@ -53,6 +54,36 @@ Para popular o banco com dados de exemplo (~5 hotéis, ~10 hóspedes, ~10 reserv
 ```
 rails db:seed
 ```
+
+### Seed em containers
+
+Com o stack Docker ativo:
+```
+docker compose run --rm web ./bin/rails db:seed
+```
+
+## Executar com Docker
+
+1. Copie o arquivo `.env.docker.example` para `.env.docker` e preencha o valor de `RAILS_MASTER_KEY` (use a chave em `config/master.key`).
+2. Faça o build da imagem e suba os serviços:
+   ```
+   docker compose up --build
+   ```
+3. A aplicação ficará disponível em `http://localhost:3000`.
+
+Os volumes nomeados preservam `storage/`, `db/` e a pasta `tmp/` entre reinicializações. Ajuste `APP_HOST` em `.env.docker` se precisar gerar links externos a partir do container. Se desejar outro banco, sobrescreva o `DATABASE_URL` (por padrão ele aponta para `sqlite3:/rails/db/production.sqlite3`).
+
+## Deploy na Render (Docker)
+
+1. Crie um serviço *Web Service* com ambiente **Docker** apontando para este repositório.
+2. Defina as variáveis de ambiente obrigatórias:
+   - `RAILS_MASTER_KEY` (obrigatória, disponível em `config/master.key`).
+   - `APP_HOST` (ex.: `hotel-constantino.onrender.com`).
+   - `FORCE_SSL` (`true` para HTTPS em produção).
+3. Crie um banco PostgreSQL na Render e conecte `DATABASE_URL` ao *connection string* do banco.
+4. (Opcional) Use o `render.yaml` incluso para provisionar serviço + banco automaticamente.
+
+O Dockerfile já instala as dependências do `pg`, prepara assets e roda migrations via `bin/docker-entrypoint` (`rails db:prepare`) durante o boot do container.
 
 ## Credenciais Demo
 

@@ -16,7 +16,7 @@ WORKDIR /rails
 
 # Install base packages
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y curl libjemalloc2 libvips sqlite3 tzdata && \
+    apt-get install --no-install-recommends -y curl libjemalloc2 libpq5 libvips sqlite3 tzdata && \
     rm -rf /var/lib/apt/lists/* /var/cache/apt/archives
 
 # Set production environment
@@ -26,7 +26,6 @@ ENV RAILS_ENV="production" \
     BUNDLE_WITHOUT="development:test" \
     RAILS_SERVE_STATIC_FILES="true" \
     RAILS_LOG_TO_STDOUT="true" \
-    DATABASE_PATH="/rails/db/production.sqlite3" \
     PORT="3000"
 
 # Throw-away build stage to reduce size of final image
@@ -34,7 +33,7 @@ FROM base AS build
 
 # Install packages needed to build gems
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential git libsqlite3-dev libyaml-dev pkg-config && \
+    apt-get install --no-install-recommends -y build-essential git libpq-dev libsqlite3-dev libyaml-dev pkg-config && \
     rm -rf /var/lib/apt/lists/* /var/cache/apt/archives
 
 # Install application gems

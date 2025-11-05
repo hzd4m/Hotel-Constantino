@@ -1,0 +1,72 @@
+<% content_for :title, @quarto.full_label %>
+
+<div class="page-header">
+  <div class="stack-sm">
+    <span class="page-eyebrow"><i class="bi bi-door-closed"></i> Hotel <%= @hotel.nome %></span>
+    <h1 class="page-header__title">Quarto <%= @quarto.numero %></h1>
+    <% if @quarto.descricao.present? %>
+      <p class="page-header__subtitle"><%= @quarto.descricao %></p>
+    <% end %>
+  </div>
+  <div class="page-actions">
+    <%= link_to hotel_quartos_path(@hotel), class: "btn btn-outline-secondary" do %>
+      <i class="bi bi-arrow-left"></i> Voltar
+    <% end %>
+    <%= link_to edit_hotel_quarto_path(@hotel, @quarto), class: "btn btn-gradient" do %>
+      <i class="bi bi-pencil"></i> Editar
+    <% end %>
+  </div>
+</div>
+
+<div class="detail-layout">
+  <div class="detail-card">
+    <span class="badge-gradient badge detail-card__badge">Informações</span>
+    <dl class="detail-list">
+      <dt>Tipo</dt>
+      <dd><%= @quarto.room_type&.nome || "Não definido" %></dd>
+      <dt>Capacidade</dt>
+      <dd><%= @quarto.capacidade %> hóspedes</dd>
+      <dt>Status</dt>
+      <dd><span class="status-chip <%= status_chip_for_room(@quarto) %>"><%= @quarto.status_label %></span></dd>
+      <dt>Valor base</dt>
+      <dd><%= number_to_currency(@quarto.price_cents / 100.0, unit: "R$", separator: ",", delimiter: ".") %></dd>
+      <dt>Andar</dt>
+      <dd><%= @quarto.andar.presence || "Não informado" %></dd>
+    </dl>
+  </div>
+
+  <aside class="action-panel">
+    <span class="action-panel__title">Ações rápidas</span>
+    <%= link_to new_hotel_quarto_path(@hotel), class: "btn btn-outline-secondary d-flex justify-content-between align-items-center" do %>
+      <span>Cadastrar novo</span>
+      <i class="bi bi-plus"></i>
+    <% end %>
+    <%= link_to hotel_room_types_path(@hotel), class: "btn btn-outline-secondary d-flex justify-content-between align-items-center" do %>
+      <span>Ver tipos de quarto</span>
+      <i class="bi bi-collection"></i>
+    <% end %>
+    <%= button_to hotel_quarto_path(@hotel, @quarto), method: :delete, data: { turbo_confirm: "Remover este quarto?" }, class: "btn btn-outline-danger w-100" do %>
+      Excluir quarto
+    <% end %>
+  </aside>
+</div>
+
+<div class="surface-card surface-card--compact mt-4">
+  <h2 class="h6 mb-3">Reservas atribuídas</h2>
+  <% if @quarto.reservas.any? %>
+    <ul class="list-group">
+      <% @quarto.reservas.includes(:hospede).order(data_checkin: :desc).each do |reserva| %>
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <div>
+            <strong>Reserva #<%= reserva.id %></strong>
+            <small class="d-block text-muted">Hóspede: <%= reserva.hospede&.nome || "Não informado" %></small>
+            <small class="d-block text-muted">Check-in: <%= l(reserva.data_checkin, format: :short) %> | Check-out: <%= l(reserva.data_checkout, format: :short) %></small>
+          </div>
+          <%= link_to "Ver reserva", reserva_path(reserva), class: "btn btn-outline-secondary btn-sm" %>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p class="text-muted mb-0">Nenhuma reserva vinculada a este quarto.</p>
+  <% end %>
+</div>

@@ -23,5 +23,10 @@ module HotelConstantino
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+
+    config.x.phone_verification = ActiveSupport::OrderedOptions.new
+    config.x.phone_verification.demo_code = ENV.fetch("DEMO_PHONE_OTP", "0000")
+
+    config.x.default_host = ENV.fetch("APP_HOST", "localhost:3000")
   end
 end
