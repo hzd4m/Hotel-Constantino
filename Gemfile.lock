@@ -208,8 +208,12 @@ GEM
     parser (3.3.9.0)
       ast (~> 2.4.1)
       racc
-  pdf-core (0.10.0)
-  pg (1.5.6)
+    pdf-core (0.10.0)
+    pg (1.6.2)
+    pg (1.6.2-aarch64-linux)
+    pg (1.6.2-aarch64-linux-musl)
+    pg (1.6.2-x86_64-linux)
+    pg (1.6.2-x86_64-linux-musl)
     pp (0.6.3)
       prettyprint
     prawn (2.5.0)
@@ -409,11 +413,11 @@ DEPENDENCIES
   jbuilder
   kamal
   kaminari
+  pg (~> 1.5)
   prawn
   prawn-table
   propshaft
   puma (>= 5.0)
-  pg (~> 1.5)
   rails (~> 8.0.2, >= 8.0.2.1)
   rubocop-rails-omakase
   selenium-webdriver
