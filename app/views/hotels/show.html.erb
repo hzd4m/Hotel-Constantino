@@ -33,14 +33,66 @@
 
 	<aside class="action-panel">
 		<span class="action-panel__title">Fluxos rápidos</span>
-		<%= link_to 'Cadastrar nova reserva', new_reserva_path, class: "btn btn-outline-secondary d-flex justify-content-between align-items-center" do %>
+		<%= link_to new_reserva_path, class: "btn btn-outline-secondary d-flex justify-content-between align-items-center" do %>
 			<span>Gerar reserva</span>
 			<i class="bi bi-calendar-plus"></i>
 		<% end %>
-		<%= link_to 'Ver hóspedes', hospedes_path, class: "btn btn-outline-secondary d-flex justify-content-between align-items-center" do %>
+		<%= link_to hotel_room_types_path(@hotel), class: "btn btn-outline-secondary d-flex justify-content-between align-items-center" do %>
+			<span>Tipos de quarto</span>
+			<i class="bi bi-collection"></i>
+		<% end %>
+		<%= link_to hotel_quartos_path(@hotel), class: "btn btn-outline-secondary d-flex justify-content-between align-items-center" do %>
+			<span>Gerenciar quartos</span>
+			<i class="bi bi-door-closed"></i>
+		<% end %>
+		<%= link_to hospedes_path, class: "btn btn-outline-secondary d-flex justify-content-between align-items-center" do %>
 			<span>Listar hóspedes</span>
 			<i class="bi bi-people"></i>
 		<% end %>
 		<%= button_to 'Excluir hotel', hotel_path(@hotel), method: :delete, class: "btn btn-outline-danger w-100", form: { class: "w-100" }, data: { turbo_confirm: 'Tem certeza que deseja excluir este hotel?' } %>
 	</aside>
+</div>
+
+<div class="surface-card surface-card--compact mt-4">
+	<h2 class="h6 mb-3">Tipos de quarto recentes</h2>
+	<% if @room_types.any? %>
+		<ul class="list-group">
+			<% @room_types.each do |room_type| %>
+				<li class="list-group-item d-flex justify-content-between align-items-center">
+					<div>
+						<strong><%= room_type.nome %></strong>
+						<small class="d-block text-muted">Valor base: <%= number_to_currency(room_type.price_cents / 100.0, unit: "R$", separator: ",", delimiter: ".") %></small>
+					</div>
+					<%= link_to "Ver", hotel_room_type_path(@hotel, room_type), class: "btn btn-outline-secondary btn-sm" %>
+				</li>
+			<% end %>
+		</ul>
+		<div class="text-end mt-2">
+			<%= link_to "Ver todos", hotel_room_types_path(@hotel), class: "btn btn-link" %>
+		</div>
+	<% else %>
+		<p class="text-muted mb-0">Nenhum tipo cadastrado.</p>
+	<% end %>
+</div>
+
+<div class="surface-card surface-card--compact mt-4">
+	<h2 class="h6 mb-3">Quartos recentes</h2>
+	<% if @quartos.any? %>
+		<ul class="list-group">
+			<% @quartos.each do |quarto| %>
+				<li class="list-group-item d-flex justify-content-between align-items-center">
+					<div>
+						<strong>Quarto <%= quarto.numero %></strong>
+						<small class="d-block text-muted"><%= quarto.room_type&.nome || "Sem tipo" %> • Status: <%= quarto.status_label %></small>
+					</div>
+					<%= link_to "Ver", hotel_quarto_path(@hotel, quarto), class: "btn btn-outline-secondary btn-sm" %>
+				</li>
+			<% end %>
+		</ul>
+		<div class="text-end mt-2">
+			<%= link_to "Ver todos", hotel_quartos_path(@hotel), class: "btn btn-link" %>
+		</div>
+	<% else %>
+		<p class="text-muted mb-0">Nenhum quarto cadastrado.</p>
+	<% end %>
 </div>

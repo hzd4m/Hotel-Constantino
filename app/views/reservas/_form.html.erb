@@ -1,6 +1,6 @@
 <% hospedes_options = @hospedes_options || Hospede.order(:nome) %>
 <% hotels_options = @hotels_options || Hotel.order(:nome) %>
-<% status_choices = [["Confirmada", "Confirmada"], ["Pendente", "Pendente"], ["Cancelada", "Cancelada"]] %>
+<% status_choices = Reserva.statuses.keys.map { |status_key| [status_key.titleize, status_key] } %>
 
 <%= form_with(model: reserva, local: true, class: "row g-3 form-grid") do |form| %>
   <% if reserva.errors.any? %>
@@ -60,7 +60,7 @@
 
   <div class="col-12 col-md-6">
     <%= form.label :status, class: "form-label" %>
-    <%= form.select :status, status_choices, { prompt: "Selecione o status" }, class: "form-select #{'is-invalid' if form.object.errors[:status].present?}" %>
+  <%= form.select :status, status_choices, { prompt: "Selecione o status" }, class: "form-select #{'is-invalid' if form.object.errors[:status].present?}" %>
     <% if form.object.errors[:status].present? %>
       <div class="invalid-feedback"><%= form.object.errors[:status].first %></div>
     <% end %>
@@ -74,6 +74,26 @@
     </div>
     <% if form.object.errors[:valor_total].present? %>
       <div class="invalid-feedback d-block"><%= form.object.errors[:valor_total].first %></div>
+    <% end %>
+  </div>
+
+  <div class="col-12">
+    <% quartos_errors = form.object.errors[:quartos].presence || form.object.errors[:quarto_ids] %>
+    <%= form.label :quarto_ids, "Quartos atribuídos", class: "form-label" %>
+  <%= form.collection_select :quarto_ids,
+                 (@quartos_options || []),
+                 :id,
+                 :full_label,
+                 { include_hidden: false, selected: form.object.quarto_ids },
+                 class: "form-select #{'is-invalid' if quartos_errors.present?}", multiple: true, size: 5 %>
+    <% if quartos_errors.present? %>
+      <div class="invalid-feedback d-block"><%= quartos_errors.first %></div>
+    <% elsif @selected_hotel.blank? %>
+      <p class="form-text text-muted mb-0">Selecione um hotel para listar os quartos disponíveis.</p>
+    <% elsif (@quartos_options || []).blank? %>
+      <p class="form-text text-muted mb-0">Nenhum quarto cadastrado para este hotel.</p>
+    <% else %>
+      <p class="form-text text-muted mb-0">Segure Ctrl (Windows) ou Command (Mac) para selecionar múltiplos quartos.</p>
     <% end %>
   </div>
 

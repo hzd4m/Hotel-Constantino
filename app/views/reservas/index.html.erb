@@ -7,6 +7,10 @@
     <p class="page-header__subtitle">Monitore jornadas de check-in a check-out, aplique filtros rápidos e gere relatórios em PDF.</p>
   </div>
   <div class="page-actions">
+    <%= link_to calendar_reservas_path, class: "btn btn-outline-secondary d-inline-flex align-items-center gap-2" do %>
+      <i class="bi bi-calendar-range"></i>
+      <span>Ver calendário</span>
+    <% end %>
     <%= link_to new_reserva_path, class: "btn btn-gradient d-inline-flex align-items-center gap-2" do %>
       <i class="bi bi-plus-lg"></i>
       <span>Nova reserva</span>
@@ -38,8 +42,9 @@
       </div>
 
       <div class="filters-card__field">
-        <%= form.label :status, "Status", class: "form-label" %>
-        <%= form.select :status, options_for_select(['Confirmada', 'Pendente', 'Cancelada'], @filters[:status]), { include_blank: "Todos" }, class: "form-select" %>
+  <%= form.label :status, "Status", class: "form-label" %>
+  <% status_options = Reserva.statuses.keys.map { |status_key| [status_key.titleize, status_key] } %>
+  <%= form.select :status, options_for_select(status_options, @filters[:status]), { include_blank: "Todos" }, class: "form-select" %>
       </div>
     </div>
 
@@ -76,7 +81,7 @@
   <% if @reservas.any? %>
     <div class="table-card__body">
       <div class="table-responsive">
-        <table class="table align-middle">
+        <table class="table align-middle table-stack">
           <thead>
             <tr>
               <th scope="col">Hóspede</th>
@@ -98,13 +103,13 @@
                 end %>
               <% status_key = reserva.status.to_s.downcase %>
               <% status_class = case status_key
-                when "confirmada" then "status-chip--success"
-                when "pendente" then "status-chip--warning"
+                when "reservada" then "status-chip--warning"
+                when "confirmada", "checked_in" then "status-chip--success"
                 when "cancelada" then "status-chip--danger"
                 else "status-chip--default"
               end %>
               <tr>
-                <td>
+                <td data-label="Hóspede">
                   <div class="d-flex align-items-center gap-3">
                     <div class="hc-avatar"><%= avatar_initial.present? ? avatar_initial.upcase : "?" %></div>
                     <div class="stack-sm mb-0 gap-1">
@@ -115,7 +120,7 @@
                     </div>
                   </div>
                 </td>
-                <td>
+                <td data-label="Hotel">
                   <div class="stack-sm mb-0 gap-1">
                     <strong><%= hotel.nome %></strong>
                     <% if hotel.cidade.present? %>
@@ -123,7 +128,7 @@
                     <% end %>
                   </div>
                 </td>
-                <td>
+                <td data-label="Check-in">
                   <div class="stack-sm mb-0 gap-1">
                     <strong><%= reserva.data_checkin.present? ? l(reserva.data_checkin) : '-' %></strong>
                     <% if reserva.created_at.present? %>
@@ -131,7 +136,7 @@
                     <% end %>
                   </div>
                 </td>
-                <td>
+                <td data-label="Check-out">
                   <div class="stack-sm mb-0 gap-1">
                     <strong><%= reserva.data_checkout.present? ? l(reserva.data_checkout) : '-' %></strong>
                     <% if nights.present? && nights.positive? %>
@@ -139,10 +144,10 @@
                     <% end %>
                   </div>
                 </td>
-                <td>
+                <td data-label="Status">
                   <span class="status-chip <%= status_class %>"><%= reserva.status.to_s.titleize %></span>
                 </td>
-                <td class="text-end">
+                <td class="text-end" data-label="Valor Total">
                   <div class="stack-sm mb-0 gap-1 text-end">
                     <strong><%= reserva.valor_total.present? ? number_to_currency(reserva.valor_total, unit: "R$", separator: ",", delimiter: ".") : "-" %></strong>
                     <% if reserva.updated_at.present? %>
@@ -150,7 +155,7 @@
                     <% end %>
                   </div>
                 </td>
-                <td class="text-end">
+                <td class="text-end" data-label="Ações">
                   <div class="table-actions">
                     <%= link_to reserva_path(reserva), class: "btn btn-outline-secondary btn-sm d-inline-flex align-items-center gap-2" do %>
                       <span>Ver</span>

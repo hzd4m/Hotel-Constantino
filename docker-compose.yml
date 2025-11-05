@@ -1,0 +1,26 @@
+services:
+  web:
+    build:
+      context: .
+    image: hotel_constantino:latest
+    container_name: hotel_constantino_web
+    env_file:
+      - .env.docker
+    environment:
+      RAILS_ENV: production
+      FORCE_SSL: ${FORCE_SSL:-false}
+      APP_HOST: ${APP_HOST:-localhost:3000}
+      DATABASE_URL: ${DATABASE_URL:-sqlite3:/rails/db/production.sqlite3}
+    ports:
+      - "3000:3000"
+    volumes:
+      - storage:/rails/storage
+      - db:/rails/db
+      - tmp:/rails/tmp
+    command: ./bin/rails server -b 0.0.0.0 -p 3000
+    restart: unless-stopped
+
+volumes:
+  storage:
+  db:
+  tmp:

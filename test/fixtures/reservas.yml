@@ -1,17 +1,26 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  data_checkin: 2025-10-16
-  data_checkout: 2025-10-16
-  status: MyString
-  valor_total: 9.99
-  hotel: one
-  hospede: one
+upcoming:
+  data_checkin: <%= Date.current + 5 %>
+  data_checkout: <%= Date.current + 8 %>
+  status: reservada
+  valor_total: 750.00
+  hotel: downtown
+  hospede: verified
 
-two:
-  data_checkin: 2025-10-16
-  data_checkout: 2025-10-16
-  status: MyString
-  valor_total: 9.99
-  hotel: two
-  hospede: two
+pending_confirmation:
+  data_checkin: <%= Date.current + 7 %>
+  data_checkout: <%= Date.current + 9 %>
+  status: reservada
+  valor_total: 620.00
+  hotel: seaside
+  hospede: pending
+
+in_progress:
+  data_checkin: <%= Date.current - 1 %>
+  data_checkout: <%= Date.current + 2 %>
+  status: checked_in
+  valor_total: 980.00
+  hotel: downtown
+  hospede: verified
+  check_in_at: <%= Time.current - 12.hours %>

@@ -28,4 +28,39 @@
 #       enabled: "ON"
 
 en:
+  date:
+    formats:
+      calendar_month: "%B %Y"
   hello: "Hello world"
+  reservas:
+    timeline:
+      created: "Reserva criada"
+      confirmed: "Reserva confirmada"
+      checked_in: "Check-in realizado"
+      checked_out: "Check-out concluído"
+    consumptions:
+      requested_by:
+        guest: "Hóspede"
+        staff: "Equipe"
+    events:
+      confirmed:
+        label: "Reserva confirmada"
+        icon: "bi-patch-check"
+      checked_in:
+        label: "Check-in realizado"
+        icon: "bi-door-open"
+      checked_out:
+        label: "Check-out concluído"
+        icon: "bi-door-closed"
+      cancelled:
+        label: "Reserva cancelada"
+        icon: "bi-x-circle"
+        details: "Motivo: %{reason}"
+      consumption_requested:
+        label: "Solicitação enviada"
+        icon: "bi-bag-plus"
+        details: "%{title} (por %{requested_by})"
+      consumption_status_changed:
+        label: "Atualização de consumo"
+        icon: "bi-bag-check"
+        details: "%{title}: %{previous_status} → %{status}"

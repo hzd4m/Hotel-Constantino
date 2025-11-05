@@ -28,7 +28,8 @@
   </head>
 
   <body class="app-shell d-flex flex-column min-vh-100 <%= content_for?(:body_class) ? yield(:body_class) : "" %>">
-    <header class="hc-navbar-backdrop" data-controller="menu" data-menu-target="header">
+    <div data-controller="menu">
+    <header class="hc-navbar-backdrop" data-menu-target="header">
       <div class="container hc-navbar">
         <div class="d-flex align-items-center gap-3">
           <span class="hc-navbar-tag">Hotel Constantino</span>
@@ -83,7 +84,7 @@
       <div class="hc-drawer" data-menu-target="drawer">
         <div class="d-flex justify-content-between align-items-center mb-4">
           <span class="hc-navbar-tag">Hotel Constantino</span>
-          <button type="button" class="hc-hamburger is-open" data-action="click->menu#toggle" aria-label="Fechar menu">
+          <button type="button" class="hc-hamburger" data-action="click->menu#toggle" aria-label="Fechar menu" aria-expanded="false" data-menu-target="hamburger">
             <span></span>
             <span></span>
             <span></span>
@@ -109,6 +110,7 @@
           <%= link_to "Criar conta", new_user_registration_path, class: "btn btn-gradient" %>
         <% end %>
       </div>
+    </div>
     </div>
 
     <main class="flex-grow-1 py-4">

@@ -1,0 +1,39 @@
+downtown_101:
+  hotel: downtown
+  room_type: suite_master
+  numero: "101"
+  andar: "10"
+  capacidade: 2
+  descricao: Vista para a cidade
+  status: disponivel
+  price_cents: 48000
+
+downtown_102:
+  hotel: downtown
+  room_type: suite_master
+  numero: "102"
+  andar: "10"
+  capacidade: 2
+  descricao: Opcao dupla vizinha
+  status: ocupado
+  price_cents: 46000
+
+seaside_201:
+  hotel: seaside
+  room_type: ocean_deluxe
+  numero: "201"
+  andar: "20"
+  capacidade: 3
+  descricao: Frente mar com varanda
+  status: ocupado
+  price_cents: 52000
+
+seaside_202:
+  hotel: seaside
+  room_type: ocean_deluxe
+  numero: "202"
+  andar: "20"
+  capacidade: 2
+  descricao: Frente mar twin
+  status: disponivel
+  price_cents: 50000

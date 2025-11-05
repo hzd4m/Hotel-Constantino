@@ -1,0 +1,48 @@
+<%= form_with(model: [@hotel, @quarto], local: true) do |form| %>
+  <% if @quarto.errors.any? %>
+    <div class="alert alert-danger">
+      <p class="mb-1"><strong>Não foi possível salvar:</strong></p>
+      <ul class="mb-0">
+        <% @quarto.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row g-3">
+    <div class="col-md-4">
+      <%= form.label :numero, "Número", class: "form-label" %>
+      <%= form.text_field :numero, class: "form-control" %>
+    </div>
+    <div class="col-md-4">
+      <%= form.label :andar, "Andar", class: "form-label" %>
+      <%= form.text_field :andar, class: "form-control" %>
+    </div>
+    <div class="col-md-4">
+      <%= form.label :room_type_id, "Tipo de quarto", class: "form-label" %>
+      <%= form.collection_select :room_type_id, @room_types, :id, :nome, { prompt: "Selecione" }, class: "form-select" %>
+    </div>
+    <div class="col-md-4">
+      <%= form.label :capacidade, "Capacidade", class: "form-label" %>
+      <%= form.number_field :capacidade, class: "form-control", min: 1 %>
+    </div>
+    <div class="col-md-4">
+      <%= form.label :status, "Status", class: "form-label" %>
+      <%= form.select :status, Quarto.statuses.keys.map { |key| [key.titleize, key] }, {}, class: "form-select" %>
+    </div>
+    <div class="col-md-4">
+      <%= form.label :price_cents, "Valor (R$)", class: "form-label" %>
+      <%= form.number_field :price_cents, class: "form-control", min: 0, step: 100 %>
+    </div>
+    <div class="col-12">
+      <%= form.label :descricao, "Descrição", class: "form-label" %>
+      <%= form.text_area :descricao, class: "form-control", rows: 3 %>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-end gap-2 mt-4">
+    <%= link_to "Cancelar", hotel_quartos_path(@hotel), class: "btn btn-outline-secondary" %>
+    <%= form.submit class: "btn btn-gradient" %>
+  </div>
+<% end %>

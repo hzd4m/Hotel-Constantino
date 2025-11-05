@@ -35,6 +35,8 @@ class HotelsController < ApplicationController
   end
 
   def show 
+    @room_types = @hotel.room_types.order(:nome).limit(5)
+    @quartos = @hotel.quartos.includes(:room_type).order(:numero).limit(5)
   end 
 
   def new 

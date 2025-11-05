@@ -1,15 +1,15 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  nome: MyString
-  cidade: MyString
-  endereco: MyString
-  telefone: MyString
-  categoria: MyString
+downtown:
+  nome: Hotel Downtown
+  cidade: Sao Paulo
+  endereco: Avenida Paulista, 1000
+  telefone: 11987654321
+  categoria: Urbano
 
-two:
-  nome: MyString
-  cidade: MyString
-  endereco: MyString
-  telefone: MyString
-  categoria: MyString
+seaside:
+  nome: Hotel Seaside
+  cidade: Rio de Janeiro
+  endereco: Avenida Atlantica, 500
+  telefone: 21976543210
+  categoria: Praia

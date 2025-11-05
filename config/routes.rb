@@ -27,17 +27,32 @@ Rails.application.routes.draw do
     collection do
       get :export
     end
+    resources :room_types
+    resources :quartos
   end
 
   resources :hospedes do
     collection do
       get :export
     end
+    member do
+      get :confirm_phone
+      post :verify_phone
+    end
   end
 
   resources :reservas do
     collection do
       get :export
+      get :incompletas
+      get :calendar
+    end
+    member do
+      post :confirmar
+      post :check_in
+      post :check_out
+      post :consumptions, action: :create_consumption
+      patch "consumptions/:consumption_id", action: :update_consumption, as: :consumption
     end
   end
 

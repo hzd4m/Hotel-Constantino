@@ -12,22 +12,24 @@ mkdir -p /rails/tmp/pids /rails/tmp/cache /rails/tmp/sockets
 # Clean up stale PID from previous runs to avoid boot failures on restart
 rm -f /rails/tmp/pids/server.pid
 
-# Prepare directory for SQLite database if DATABASE_PATH is provided
-if [ -n "${DATABASE_PATH:-}" ]; then
-  mkdir -p "$(dirname "${DATABASE_PATH}")"
-fi
+ensure_sqlite_dir() {
+  case "$1" in
+    sqlite3:*)
+      local path="${1#sqlite3:}"
+      [ -n "$path" ] && mkdir -p "$(dirname "$path")"
+      ;;
+  esac
+}
 
-if [ -n "${CABLE_DATABASE_PATH:-}" ]; then
-  mkdir -p "$(dirname "${CABLE_DATABASE_PATH}")"
-fi
+ensure_sqlite_dir "${DATABASE_URL:-}"
+ensure_sqlite_dir "${CABLE_DATABASE_URL:-}"
+ensure_sqlite_dir "${QUEUE_DATABASE_URL:-}"
+ensure_sqlite_dir "${CACHE_DATABASE_URL:-}"
 
-if [ -n "${QUEUE_DATABASE_PATH:-}" ]; then
-  mkdir -p "$(dirname "${QUEUE_DATABASE_PATH}")"
-fi
-
-if [ -n "${CACHE_DATABASE_PATH:-}" ]; then
-  mkdir -p "$(dirname "${CACHE_DATABASE_PATH}")"
-fi
+[ -n "${DATABASE_PATH:-}" ] && ensure_sqlite_dir "sqlite3:${DATABASE_PATH}"
+[ -n "${CABLE_DATABASE_PATH:-}" ] && ensure_sqlite_dir "sqlite3:${CABLE_DATABASE_PATH}"
+[ -n "${QUEUE_DATABASE_PATH:-}" ] && ensure_sqlite_dir "sqlite3:${QUEUE_DATABASE_PATH}"
+[ -n "${CACHE_DATABASE_PATH:-}" ] && ensure_sqlite_dir "sqlite3:${CACHE_DATABASE_PATH}"
 
 # If running the rails server then create or migrate existing database
 if [ "$1" == "./bin/rails" ] && [ "$2" == "server" ]; then

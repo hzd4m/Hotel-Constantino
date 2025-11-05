@@ -1,0 +1,11 @@
+upcoming_room:
+  reserva: upcoming
+  quarto: downtown_101
+
+pending_room:
+  reserva: pending_confirmation
+  quarto: seaside_202
+
+in_progress_room:
+  reserva: in_progress
+  quarto: downtown_102

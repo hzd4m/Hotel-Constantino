@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: hotel-constantino
+    env: docker
+    plan: starter
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /up
+    envVars:
+      - key: RAILS_MASTER_KEY
+        sync: false
+      - key: APP_HOST
+        value: hotel-constantino.onrender.com
+      - key: FORCE_SSL
+        value: "true"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: hotel-constantino-db
+          property: connection_string
+      - key: RAILS_LOG_LEVEL
+        value: info
+      - key: SOLID_QUEUE_IN_PUMA
+        value: "true"
+    autoDeploy: true
+
+databases:
+  - name: hotel-constantino-db
+    plan: starter
+    databaseName: hotel_constantino
+    user: hotel_constantino
