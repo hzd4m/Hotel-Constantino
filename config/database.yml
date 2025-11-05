@@ -29,3 +29,7 @@ production:
 cable:
   <<: *default
   database: <%= ENV.fetch("CABLE_DATABASE_PATH", ENV.fetch("DATABASE_PATH", Rails.root.join("db", "cable.sqlite3"))) %>
+
+queue:
+  <<: *default
+  database: <%= ENV.fetch("QUEUE_DATABASE_PATH", ENV.fetch("DATABASE_PATH", Rails.root.join("db", "queue.sqlite3"))) %>
