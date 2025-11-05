@@ -9,6 +9,9 @@ fi
 # Ensure tmp directories exist
 mkdir -p /rails/tmp/pids /rails/tmp/cache /rails/tmp/sockets
 
+# Clean up stale PID from previous runs to avoid boot failures on restart
+rm -f /rails/tmp/pids/server.pid
+
 # Prepare directory for SQLite database if DATABASE_PATH is provided
 if [ -n "${DATABASE_PATH:-}" ]; then
   mkdir -p "$(dirname "${DATABASE_PATH}")"
