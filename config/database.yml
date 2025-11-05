@@ -23,7 +23,7 @@ test:
 
 production:
   <<: *default
-  url: <%= ENV.fetch("DATABASE_URL") %>
+  url: <%= ENV["DATABASE_URL"].presence || "sqlite3:/rails/db/production.sqlite3" %>
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
 cable:
