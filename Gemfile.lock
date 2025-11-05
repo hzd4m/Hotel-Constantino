@@ -175,8 +175,6 @@ GEM
     mini_mime (1.1.5)
     minitest (5.26.0)
     msgpack (1.8.0)
-    mysql2 (0.5.7)
-      bigdecimal
     net-imap (0.5.12)
       date
       net-protocol
@@ -410,7 +408,6 @@ DEPENDENCIES
   jbuilder
   kamal
   kaminari
-  mysql2 (~> 0.5)
   prawn
   prawn-table
   propshaft
