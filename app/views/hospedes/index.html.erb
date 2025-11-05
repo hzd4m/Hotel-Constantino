@@ -3,33 +3,35 @@
 <div class="page-header">
   <div class="stack-sm">
     <span class="page-eyebrow"><i class="bi bi-people"></i> Relacionamento</span>
-    <h1 class="page-header__title">Hóspedes</h1>
-    <p class="page-header__subtitle">Centralize cadastros, contatos e histórico de quem já viveu a experiência Constantino.</p>
+    <h1 class="page-header__title">Registro de hóspedes</h1>
+    <p class="page-header__subtitle">Centralize perfis, contatos e histórico de estadas com filtros rápidos e ações diretas.</p>
   </div>
   <div class="page-actions">
-    <%= link_to 'Novo hóspede', new_hospede_path, class: "btn btn-gradient" %>
+    <%= link_to 'Cadastrar hóspede', new_hospede_path, class: "btn btn-gradient" %>
   </div>
 </div>
 
-<div class="surface-card surface-card--compact filters-card">
-  <%= form_with url: hospedes_path, method: :get, local: true, scope: nil, class: "row g-3 align-items-end" do |form| %>
-    <div class="col-12 col-md-4">
-      <%= form.label :nome, "Nome", class: "form-label" %>
-      <%= form.text_field :nome, value: params[:nome], class: "form-control" %>
+<div class="filters-card surface-card surface-card--compact">
+  <%= form_with url: hospedes_path, method: :get, local: true, scope: nil, class: "filters-card__form" do |form| %>
+    <div class="filters-card__fields">
+      <div class="filters-card__field">
+        <%= form.label :nome, "Nome", class: "form-label" %>
+        <%= form.text_field :nome, value: @filters[:nome], class: "form-control" %>
+      </div>
+
+      <div class="filters-card__field">
+        <%= form.label :documento, "Documento", class: "form-label" %>
+        <%= form.text_field :documento, value: @filters[:documento], class: "form-control" %>
+      </div>
+
+      <div class="filters-card__field">
+        <%= form.label :email, "E-mail", class: "form-label" %>
+        <%= form.text_field :email, value: @filters[:email], class: "form-control" %>
+      </div>
     </div>
 
-    <div class="col-12 col-md-4">
-      <%= form.label :documento, "Documento", class: "form-label" %>
-      <%= form.text_field :documento, value: params[:documento], class: "form-control" %>
-    </div>
-
-    <div class="col-12 col-md-4">
-      <%= form.label :email, "Email", class: "form-label" %>
-      <%= form.text_field :email, value: params[:email], class: "form-control" %>
-    </div>
-
-    <div class="col-12 col-xl-4 col-xxl-3 d-flex gap-2">
-      <%= form.submit "Pesquisar", class: "btn btn-outline-secondary flex-grow-1" %>
+    <div class="filters-card__actions">
+      <%= form.submit "Aplicar filtros", class: "btn btn-gradient" %>
       <%= link_to "Limpar", hospedes_path, class: "btn btn-outline-secondary" %>
     </div>
   <% end %>
@@ -37,8 +39,20 @@
 
 <div class="surface-card surface-card--flush table-card">
   <div class="table-card__header">
-    <h2 class="table-card__title">Cadastro de hóspedes</h2>
-    <span class="text-muted small"><%= pluralize(@hospedes.count, "registro") %> exibidos</span>
+    <div>
+      <span class="page-eyebrow d-inline-flex align-items-center gap-2"><i class="bi bi-person-badge"></i> Hóspedes</span>
+      <h2 class="table-card__title">Cadastro de hóspedes</h2>
+      <p class="table-card__title-sub"><%= pluralize(@hospedes.count, "registro") %> exibidos neste filtro</p>
+    </div>
+    <% if current_user.admin? %>
+      <div class="table-card__toolbar">
+  <%= render "shared/export_controls",
+       csv_path: export_hospedes_path(format: :csv),
+       pdf_path: export_hospedes_path(format: :pdf),
+       filters: [:nome, :documento, :email],
+       filter_values: @filters %>
+      </div>
+    <% end %>
   </div>
 
   <% if @hospedes.any? %>
@@ -57,15 +71,29 @@
           <tbody>
             <% @hospedes.each do |hospede| %>
               <tr>
-                <td><%= hospede.nome %></td>
-                <td><%= hospede.documento %></td>
-                <td><%= hospede.email %></td>
+                <td>
+                  <div class="d-flex align-items-center gap-3">
+                    <div class="hc-avatar"><%= hospede.nome.first.upcase %></div>
+                    <div class="stack-sm mb-0">
+                      <strong><%= hospede.nome %></strong>
+                      <span class="text-muted small">ID <%= hospede.id %></span>
+                    </div>
+                  </div>
+                </td>
+                <td><span class="badge badge-outline"><%= hospede.documento %></span></td>
+                <td><a href="mailto:<%= hospede.email %>" class="app-link"><%= hospede.email %></a></td>
                 <td><%= hospede.telefone %></td>
                 <td class="text-end">
-                  <div class="d-inline-flex gap-2">
-                    <%= link_to 'Ver', hospede_path(hospede), class: "btn btn-outline-secondary btn-sm" %>
-                    <%= link_to 'Editar', edit_hospede_path(hospede), class: "btn btn-outline-secondary btn-sm" %>
-                    <%= button_to 'Excluir', hospede_path(hospede), method: :delete, form: { class: "d-inline" }, class: "btn btn-outline-danger btn-sm", data: { turbo_confirm: 'Tem certeza que deseja excluir?' } %>
+                  <div class="table-actions">
+                    <%= link_to hospede_path(hospede), class: "btn btn-outline-secondary btn-sm" do %>
+                      Ver <i class="bi bi-arrow-up-right"></i>
+                    <% end %>
+                    <%= link_to edit_hospede_path(hospede), class: "btn btn-outline-secondary btn-sm" do %>
+                      Editar <i class="bi bi-pencil"></i>
+                    <% end %>
+                    <%= button_to hospede_path(hospede), method: :delete, form: { class: "d-inline" }, class: "btn btn-outline-danger btn-sm", data: { turbo_confirm: 'Tem certeza que deseja excluir?' } do %>
+                      Excluir <i class="bi bi-trash"></i>
+                    <% end %>
                   </div>
                 </td>
               </tr>
@@ -76,8 +104,8 @@
     </div>
   <% else %>
     <div class="empty-state">
-      <div class="empty-state__icon"><i class="bi bi-emoji-smile"></i></div>
-      <p class="mb-2">Nenhum hóspede encontrado.</p>
+      <div class="empty-state__icon"><i class="bi bi-people"></i></div>
+      <p class="mb-2">Nenhum hóspede encontrado com os filtros atuais.</p>
       <%= link_to 'Cadastrar hóspede', new_hospede_path, class: "btn btn-gradient" %>
     </div>
   <% end %>

@@ -11,6 +11,30 @@
 	</div>
 </div>
 
-<div class="surface-card surface-card--compact stack-md">
-	<%= render 'form', reserva: @reserva %>
+<div class="detail-layout">
+	<div class="surface-card surface-card--compact stack-lg">
+		<div class="stack-sm">
+			<span class="badge-gradient badge align-self-start">Checklist da estadia</span>
+			<p class="text-muted mb-0">Selecione hóspede, hotel e datas desejadas. Ajuste status e valor conforme a negociação combinada.</p>
+		</div>
+		<%= render 'form', reserva: @reserva %>
+	</div>
+
+	<aside class="action-panel">
+		<span class="action-panel__title">Atalhos úteis</span>
+		<div class="action-panel__group">
+			<%= link_to new_hospede_path, class: "btn btn-outline-secondary d-flex justify-content-between align-items-center" do %>
+				<span>Cadastrar hóspede</span>
+				<i class="bi bi-person-plus"></i>
+			<% end %>
+			<%= link_to new_hotel_path, class: "btn btn-outline-secondary d-flex justify-content-between align-items-center" do %>
+				<span>Cadastrar hotel</span>
+				<i class="bi bi-building"></i>
+			<% end %>
+			<%= link_to reservas_path, class: "btn btn-outline-secondary d-flex justify-content-between align-items-center" do %>
+				<span>Ver reservas</span>
+				<i class="bi bi-clipboard-check"></i>
+			<% end %>
+		</div>
+	</aside>
 </div>

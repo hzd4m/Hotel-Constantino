@@ -1,11 +1,59 @@
 <% page_collection = local_assigns.fetch(:collection, nil) %>
 <% params_hash = local_assigns.fetch(:params, request.query_parameters) %>
 
-<% if page_collection.respond_to?(:any?) && page_collection.any? %>
-  <% total_pages = page_collection.respond_to?(:total_pages) ? page_collection.total_pages : 1 %>
-  <% if total_pages > 1 %>
-    <nav aria-label="Paginação" class="d-flex justify-content-center mt-4">
-      <%= paginate page_collection, theme: 'bootstrap5', params: params_hash %>
-    </nav>
-  <% end %>
+<% if page_collection.respond_to?(:total_pages) && page_collection.total_pages.to_i > 1 %>
+  <% current_page = page_collection.current_page %>
+  <% total_pages = page_collection.total_pages %>
+  <% normalized_params = params_hash.stringify_keys %>
+  <% build_url = lambda do |page_number|
+       query = normalized_params.merge('page' => page_number).reject { |_, v| v.blank? }
+       query.delete('page') if page_number.to_i <= 1
+       query_string = query.to_query
+       query_string.present? ? "#{request.path}?#{query_string}" : request.path
+     end %>
+  <% window = 1 %>
+  <% start_page = [current_page - window, 1].max %>
+  <% end_page = [current_page + window, total_pages].min %>
+
+  <% display_pages = [] %>
+  <% display_pages << 1 %>
+  <% display_pages << :gap if start_page > 2 %>
+  <% (start_page..end_page).each { |page| display_pages << page } %>
+  <% display_pages << :gap if end_page < total_pages - 1 %>
+  <% display_pages << total_pages unless total_pages == 1 %>
+  <% display_pages.uniq! %>
+
+  <nav class="app-pagination" aria-label="Paginação">
+    <% prev_page = page_collection.prev_page %>
+    <% next_page = page_collection.next_page %>
+
+    <% if prev_page.present? %>
+      <%= link_to "Anterior", build_url.call(prev_page), class: "app-pagination__button" %>
+    <% else %>
+      <span class="app-pagination__button is-disabled">Anterior</span>
+    <% end %>
+
+    <ul class="app-pagination__list">
+      <% display_pages.each do |page| %>
+        <% if page == :gap %>
+          <li class="app-pagination__gap">&hellip;</li>
+        <% else %>
+          <% active = page == current_page %>
+          <li>
+            <% if active %>
+              <span class="app-pagination__link is-active"><%= page %></span>
+            <% else %>
+              <%= link_to page, build_url.call(page), class: "app-pagination__link" %>
+            <% end %>
+          </li>
+        <% end %>
+      <% end %>
+    </ul>
+
+    <% if next_page.present? %>
+      <%= link_to "Próxima", build_url.call(next_page), class: "app-pagination__button" %>
+    <% else %>
+      <span class="app-pagination__button is-disabled">Próxima</span>
+    <% end %>
+  </nav>
 <% end %>

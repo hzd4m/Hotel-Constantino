@@ -56,20 +56,20 @@
 
     <section class="py-5">
         <div class="container">
-            <div class="surface-card surface-card--compact stack-lg">
-                <div class="stack-sm">
-                    <span class="badge-gradient badge align-self-start">Experiência Constantino</span>
-                    <h2 class="h4 fw-semibold mb-0">A delicadeza está nos detalhes</h2>
-                    <p class="text-muted mb-0">Luz natural, materiais nobres e processos inteligentes criam o cenário perfeito para desconectar ou produzir.</p>
+            <div class="welcome-experience surface-card surface-card--flush">
+                <div class="welcome-experience__intro stack-md">
+                    <span class="welcome-eyebrow">Experiência Constantino</span>
+                    <div class="stack-sm">
+                        <h2 class="h4 fw-semibold mb-0">A delicadeza está nos detalhes</h2>
+                        <p class="text-muted mb-0">Luz natural, materiais nobres e processos inteligentes criam o cenário perfeito para desconectar ou produzir.</p>
+                    </div>
                 </div>
-                <div class="row g-4">
+                <div class="welcome-experience__grid">
                     <% experience_pillars.each do |pillar| %>
-                        <div class="col-12 col-md-4">
-                            <div class="surface-card surface-card--flush stack-md h-100">
-                                <div class="feature-icon-pill"><i class="bi bi-<%= pillar[:icon] %>"></i></div>
-                                <h3 class="h5 fw-semibold mb-1"><%= pillar[:title] %></h3>
-                                <p class="text-muted mb-0"><%= pillar[:copy] %></p>
-                            </div>
+                        <div class="welcome-experience__item surface-card surface-card--compact stack-md">
+                            <div class="feature-icon-pill"><i class="bi bi-<%= pillar[:icon] %>"></i></div>
+                            <h3 class="h5 fw-semibold mb-1"><%= pillar[:title] %></h3>
+                            <p class="text-muted mb-0"><%= pillar[:copy] %></p>
                         </div>
                     <% end %>
                 </div>
@@ -79,29 +79,27 @@
 
     <section class="py-5">
         <div class="container">
-            <div class="surface-card surface-card--flush row g-0 align-items-center">
-                <div class="col-12 col-lg-6">
-                    <div class="welcome-editorial stack-lg p-4 p-lg-5">
-                        <span class="badge-gradient badge align-self-start">Novas coleções</span>
-                        <h2 class="h4 fw-semibold mb-2">Bem-estar com assinatura brasileira</h2>
-                        <p class="text-muted">Das amenidades artesanais aos rituais de spa, cada detalhe foi pensado para quem prefere um ritmo tranquilo e sofisticado.</p>
-                        <div class="stack-sm">
-                            <% editorial_highlights.each do |highlight| %>
-                                <div class="welcome-editorial-item">
-                                    <span class="welcome-editorial-number"><%= highlight[:number] %></span>
-                                    <div>
-                                        <strong class="d-block"><%= highlight[:title] %></strong>
-                                        <span class="text-muted"><%= highlight[:copy] %></span>
-                                    </div>
+            <div class="welcome-editorial-card surface-card surface-card--flush">
+                <div class="welcome-editorial-card__content stack-lg">
+                    <span class="welcome-eyebrow">Novas coleções</span>
+                    <div class="stack-sm">
+                        <h2 class="h4 fw-semibold mb-0">Bem-estar com assinatura brasileira</h2>
+                        <p class="text-muted mb-0">Das amenidades artesanais aos rituais de spa, cada detalhe foi pensado para quem prefere um ritmo tranquilo e sofisticado.</p>
+                    </div>
+                    <div class="welcome-editorial-list">
+                        <% editorial_highlights.each do |highlight| %>
+                            <div class="welcome-editorial-item">
+                                <span class="welcome-editorial-number"><%= highlight[:number] %></span>
+                                <div class="welcome-editorial-copy">
+                                    <strong class="d-block"><%= highlight[:title] %></strong>
+                                    <span class="text-muted"><%= highlight[:copy] %></span>
                                 </div>
-                            <% end %>
-                        </div>
+                            </div>
+                        <% end %>
                     </div>
                 </div>
-                <div class="col-12 col-lg-6">
-                    <div class="welcome-editorial-media">
-                        <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1600&q=80" alt="Detalhes de bem-estar do Hotel Constantino" class="w-100 h-100 object-fit-cover">
-                    </div>
+                <div class="welcome-editorial-card__media">
+                    <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1600&q=80" alt="Detalhes de bem-estar do Hotel Constantino" class="w-100 h-100 object-fit-cover">
                 </div>
             </div>
         </div>
@@ -109,15 +107,13 @@
 
     <section class="py-5">
         <div class="container">
-            <div class="row g-4">
+            <div class="welcome-audience-grid">
                 <% audience_cards.each do |card| %>
-                    <div class="col-12 col-lg-4">
-                        <div class="surface-card surface-card--compact stack-md h-100">
-                            <span class="page-eyebrow"><%= card[:eyebrow] %></span>
-                            <h3 class="h5 fw-semibold mb-1"><%= card[:title] %></h3>
-                            <p class="text-muted"><%= card[:copy] %></p>
-                            <%= link_to card[:cta][:text], card[:cta][:path], class: "btn btn-outline-secondary" %>
-                        </div>
+                    <div class="welcome-audience-card surface-card surface-card--compact">
+                        <span class="page-eyebrow"><%= card[:eyebrow] %></span>
+                        <h3 class="h5 fw-semibold mb-1"><%= card[:title] %></h3>
+                        <p class="text-muted mb-0"><%= card[:copy] %></p>
+                        <%= link_to card[:cta][:text], card[:cta][:path], class: "btn btn-outline-secondary welcome-audience-card__cta" %>
                     </div>
                 <% end %>
             </div>
@@ -126,10 +122,13 @@
 
     <section class="py-5">
         <div class="container">
-            <div class="surface-card surface-card--compact text-center stack-md">
-                <h2 class="h4 fw-semibold mb-0">Vamos organizar sua próxima viagem?</h2>
-                <p class="text-muted mx-auto" style="max-width: 560px;">Nossa equipe está disponível para criar roteiros personalizados, coordenar amenities especiais e acompanhar cada etapa da reserva.</p>
-                <div class="d-flex flex-wrap justify-content-center gap-3">
+            <div class="welcome-cta surface-card surface-card--flush">
+                <div class="welcome-cta__content stack-md">
+                    <span class="badge-gradient badge align-self-start">Concierge Constantino</span>
+                    <h2 class="h4 fw-semibold mb-0">Vamos organizar sua próxima viagem?</h2>
+                    <p class="text-muted mb-0">Nossa equipe está disponível para criar roteiros personalizados, coordenar amenities especiais e acompanhar cada etapa da reserva.</p>
+                </div>
+                <div class="welcome-cta__actions d-flex flex-wrap gap-3">
                     <%= link_to "Conversar com o concierge", "mailto:reservas@hotelconstantino.com", class: "btn btn-gradient btn-lg" %>
                     <%= link_to "Explorar destinos", hotels_path, class: "btn btn-outline-secondary btn-lg" %>
                 </div>

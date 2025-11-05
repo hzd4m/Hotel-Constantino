@@ -3,33 +3,35 @@
 <div class="page-header">
   <div class="stack-sm">
     <span class="page-eyebrow"><i class="bi bi-building"></i> Portfólio</span>
-    <h1 class="page-header__title">Hotéis</h1>
-    <p class="page-header__subtitle">Gerencie o inventário de unidades boutique, atualizando informações em segundos.</p>
+    <h1 class="page-header__title">Inventário de hotéis</h1>
+    <p class="page-header__subtitle">Visualize unidades ativas, refine resultados e mantenha os dados sempre atualizados.</p>
   </div>
   <div class="page-actions">
-    <%= link_to 'Novo hotel', new_hotel_path, class: "btn btn-gradient" %>
+    <%= link_to 'Cadastrar hotel', new_hotel_path, class: "btn btn-gradient" %>
   </div>
 </div>
 
-<div class="surface-card surface-card--compact filters-card">
-  <%= form_with url: hotels_path, method: :get, local: true, scope: nil, class: "row g-3 align-items-end" do |f| %>
-    <div class="col-12 col-md-4">
-      <%= f.label :nome, "Nome", class: "form-label" %>
-      <%= f.text_field :nome, value: params[:nome], class: "form-control" %>
+<div class="filters-card surface-card surface-card--compact">
+  <%= form_with url: hotels_path, method: :get, local: true, scope: nil, class: "filters-card__form" do |f| %>
+    <div class="filters-card__fields">
+      <div class="filters-card__field">
+        <%= f.label :nome, "Nome", class: "form-label" %>
+        <%= f.text_field :nome, value: @filters[:nome], class: "form-control" %>
+      </div>
+
+      <div class="filters-card__field">
+        <%= f.label :cidade, "Cidade", class: "form-label" %>
+        <%= f.text_field :cidade, value: @filters[:cidade], class: "form-control" %>
+      </div>
+
+      <div class="filters-card__field">
+        <%= f.label :categoria, "Categoria", class: "form-label" %>
+        <%= f.select :categoria, options_for_select(['Luxo','Praia','Montanha','Urbano','Campo'], @filters[:categoria]), { include_blank: "Todas" }, class: "form-select" %>
+      </div>
     </div>
 
-    <div class="col-12 col-md-4">
-      <%= f.label :cidade, "Cidade", class: "form-label" %>
-      <%= f.text_field :cidade, value: params[:cidade], class: "form-control" %>
-    </div>
-
-    <div class="col-12 col-md-4 col-xl-3">
-      <%= f.label :categoria, "Categoria", class: "form-label" %>
-      <%= f.select :categoria, options_for_select(['Luxo','Praia','Montanha','Urbano','Campo'], params[:categoria]), { include_blank: "Todas" }, class: "form-select" %>
-    </div>
-
-    <div class="col-12 col-xl-5 col-xxl-3 d-flex gap-2">
-      <%= f.submit "Pesquisar", class: "btn btn-outline-secondary flex-grow-1" %>
+    <div class="filters-card__actions">
+      <%= f.submit "Aplicar filtros", class: "btn btn-gradient" %>
       <%= link_to "Limpar", hotels_path, class: "btn btn-outline-secondary" %>
     </div>
   <% end %>
@@ -37,8 +39,21 @@
 
 <div class="surface-card surface-card--flush table-card">
   <div class="table-card__header">
-    <h2 class="table-card__title">Lista de hotéis</h2>
-    <span class="text-muted small"><%= pluralize(@hotels.count, "registro") %> exibidos</span>
+    <div>
+      <span class="page-eyebrow d-inline-flex align-items-center gap-2"><i class="bi bi-geo"></i> Unidades</span>
+      <h2 class="table-card__title">Lista de hotéis</h2>
+      <p class="table-card__title-sub"><%= pluralize(@hotels.count, "registro") %> exibidos atualmente</p>
+    </div>
+    <div class="table-card__toolbar">
+      <% if current_user.admin? %>
+  <%= render "shared/export_controls",
+       csv_path: export_hotels_path(format: :csv),
+       pdf_path: export_hotels_path(format: :pdf),
+       filters: [:nome, :cidade, :categoria],
+       filter_values: @filters %>
+      <% end %>
+      <%= link_to 'Adicionar hotel', new_hotel_path, class: "btn btn-sm btn-outline-secondary" %>
+    </div>
   </div>
 
   <% if @hotels.any? %>
@@ -58,16 +73,27 @@
           <tbody>
             <% @hotels.each do |hotel| %>
               <tr>
-                <td><%= hotel.nome %></td>
+                <td>
+                  <div class="stack-sm mb-0">
+                    <strong><%= hotel.nome %></strong>
+                    <span class="text-muted small">ID <%= hotel.id %></span>
+                  </div>
+                </td>
                 <td><%= hotel.cidade %></td>
                 <td><%= hotel.endereco %></td>
                 <td><%= hotel.telefone %></td>
-                <td><%= hotel.categoria %></td>
+                <td><span class="badge badge-outline"><%= hotel.categoria %></span></td>
                 <td class="text-end">
-                  <div class="d-inline-flex gap-2">
-                    <%= link_to 'Ver', hotel_path(hotel), class: "btn btn-outline-secondary btn-sm" %>
-                    <%= link_to 'Editar', edit_hotel_path(hotel), class: "btn btn-outline-secondary btn-sm" %>
-                    <%= button_to 'Excluir', hotel_path(hotel), method: :delete, form: { class: "d-inline" }, class: "btn btn-outline-danger btn-sm", data: { turbo_confirm: 'Tem certeza que deseja excluir este hotel?' } %>
+                  <div class="table-actions">
+                    <%= link_to hotel_path(hotel), class: "btn btn-outline-secondary btn-sm" do %>
+                      Ver <i class="bi bi-arrow-up-right"></i>
+                    <% end %>
+                    <%= link_to edit_hotel_path(hotel), class: "btn btn-outline-secondary btn-sm" do %>
+                      Editar <i class="bi bi-pencil"></i>
+                    <% end %>
+                    <%= button_to hotel_path(hotel), method: :delete, form: { class: "d-inline" }, class: "btn btn-outline-danger btn-sm", data: { turbo_confirm: 'Tem certeza que deseja excluir este hotel?' } do %>
+                      Excluir <i class="bi bi-trash"></i>
+                    <% end %>
                   </div>
                 </td>
               </tr>

@@ -1,0 +1,33 @@
+<% require "securerandom" %>
+<div class="export-controls">
+  <% filter_values = local_assigns.fetch(:filter_values, params) %>
+  <% scope_field_id = "export_scope_#{SecureRandom.hex(4)}" %>
+  <%= form_with url: csv_path, method: :get, local: true, html: { class: "export-controls__form" } do %>
+    <% Array(filters).each do |filter_key| %>
+      <% value = filter_values[filter_key] %>
+      <%# Preserve active filters when exporting %>
+      <%= hidden_field_tag filter_key, value if value.present? %>
+    <% end %>
+    <span class="export-controls__label">Escopo</span>
+    <div class="export-controls__row">
+      <%= select_tag :export_scope,
+                     options_for_select([
+                       ["Filtros aplicados", "filtered"],
+                       ["Todos os registros", "all"]
+                     ], params[:export_scope].presence || "filtered"),
+                     class: "form-select form-select-sm export-controls__select",
+                     id: scope_field_id,
+                     aria: { label: "Selecionar escopo" } %>
+      <div class="btn-group" role="group" aria-label="Exportar">
+        <%= button_tag class: "btn btn-outline-secondary btn-sm", type: "submit", formaction: csv_path do %>
+          <i class="bi bi-file-earmark-spreadsheet"></i>
+          CSV
+        <% end %>
+        <%= button_tag class: "btn btn-outline-secondary btn-sm", type: "submit", formaction: pdf_path do %>
+          <i class="bi bi-filetype-pdf"></i>
+          PDF
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

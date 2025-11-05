@@ -3,55 +3,74 @@
 <div class="page-header">
   <div class="stack-sm">
     <span class="page-eyebrow"><i class="bi bi-calendar-event"></i> Operações</span>
-    <h1 class="page-header__title">Reservas</h1>
-    <p class="page-header__subtitle">Controle jornadas do check-in ao check-out com filtros rápidos e exportação em PDF.</p>
+    <h1 class="page-header__title">Painel de reservas</h1>
+    <p class="page-header__subtitle">Monitore jornadas de check-in a check-out, aplique filtros rápidos e gere relatórios em PDF.</p>
   </div>
   <div class="page-actions">
-    <% if current_user.admin? %>
-      <%= link_to 'Gerar PDF', export_pdf_reservas_path(request.query_parameters), class: "btn btn-outline-secondary", data: { turbo: false } %>
+    <%= link_to new_reserva_path, class: "btn btn-gradient d-inline-flex align-items-center gap-2" do %>
+      <i class="bi bi-plus-lg"></i>
+      <span>Nova reserva</span>
     <% end %>
-    <%= link_to 'Nova reserva', new_reserva_path, class: "btn btn-gradient" %>
   </div>
 </div>
 
-<div class="surface-card surface-card--compact filters-card">
-  <%= form_with url: reservas_path, method: :get, local: true, scope: nil, class: "row g-3 align-items-end" do |form| %>
-    <div class="col-12 col-lg-3">
-      <%= form.label :hospede_nome, "Hóspede", class: "form-label" %>
-      <%= form.text_field :hospede_nome, value: params[:hospede_nome], class: "form-control" %>
+<div class="filters-card surface-card surface-card--compact">
+  <%= form_with url: reservas_path, method: :get, local: true, scope: nil, class: "filters-card__form" do |form| %>
+    <div class="filters-card__fields">
+      <div class="filters-card__field">
+        <%= form.label :hospede_nome, "Hóspede", class: "form-label" %>
+        <%= form.text_field :hospede_nome, value: @filters[:hospede_nome], class: "form-control" %>
+      </div>
+
+      <div class="filters-card__field">
+        <%= form.label :hotel_nome, "Hotel", class: "form-label" %>
+        <%= form.text_field :hotel_nome, value: @filters[:hotel_nome], class: "form-control" %>
+      </div>
+
+      <div class="filters-card__field">
+        <%= form.label :data_checkin, "Check-in a partir de", class: "form-label" %>
+        <%= form.date_field :data_checkin, value: @filters[:data_checkin], class: "form-control" %>
+      </div>
+
+      <div class="filters-card__field">
+        <%= form.label :data_checkout, "Check-out até", class: "form-label" %>
+        <%= form.date_field :data_checkout, value: @filters[:data_checkout], class: "form-control" %>
+      </div>
+
+      <div class="filters-card__field">
+        <%= form.label :status, "Status", class: "form-label" %>
+        <%= form.select :status, options_for_select(['Confirmada', 'Pendente', 'Cancelada'], @filters[:status]), { include_blank: "Todos" }, class: "form-select" %>
+      </div>
     </div>
 
-    <div class="col-12 col-lg-3">
-      <%= form.label :hotel_nome, "Hotel", class: "form-label" %>
-      <%= form.text_field :hotel_nome, value: params[:hotel_nome], class: "form-control" %>
-    </div>
-
-    <div class="col-12 col-lg-3 col-xxl-2">
-      <%= form.label :data_checkin, "Check-in a partir de", class: "form-label" %>
-      <%= form.date_field :data_checkin, value: params[:data_checkin], class: "form-control" %>
-    </div>
-
-    <div class="col-12 col-lg-3 col-xxl-2">
-      <%= form.label :data_checkout, "Check-out até", class: "form-label" %>
-      <%= form.date_field :data_checkout, value: params[:data_checkout], class: "form-control" %>
-    </div>
-
-    <div class="col-12 col-lg-2 col-xxl-2">
-      <%= form.label :status, "Status", class: "form-label" %>
-      <%= form.select :status, options_for_select(['Confirmada', 'Pendente', 'Cancelada'], params[:status]), { include_blank: "Todos" }, class: "form-select" %>
-    </div>
-
-    <div class="col-12 col-lg-4 d-flex gap-2">
-      <%= form.submit "Pesquisar", class: "btn btn-outline-secondary flex-grow-1" %>
-      <%= link_to "Limpar", reservas_path, class: "btn btn-outline-secondary" %>
+    <div class="filters-card__actions">
+      <%= form.submit "Aplicar filtros", class: "btn btn-gradient" %>
+      <%= link_to "Limpar filtros", reservas_path, class: "btn btn-outline-secondary" %>
     </div>
   <% end %>
 </div>
 
 <div class="surface-card surface-card--flush table-card">
   <div class="table-card__header">
-    <h2 class="table-card__title">Reservas cadastradas</h2>
-    <span class="text-muted small"><%= pluralize(@reservas.count, "registro") %> exibidos</span>
+    <div>
+      <span class="page-eyebrow d-inline-flex align-items-center gap-2"><i class="bi bi-clipboard-data"></i> Reservas</span>
+      <h2 class="table-card__title">Reservas cadastradas</h2>
+      <p class="table-card__title-sub mb-0">
+        <%= pluralize(@reservas.count, "registro") %> nesta página
+        <% if @reservas.respond_to?(:total_count) %>
+          <span class="text-muted ms-2">Total geral: <%= pluralize(@reservas.total_count, "reserva") %></span>
+        <% end %>
+      </p>
+    </div>
+    <% if current_user.admin? %>
+      <div class="table-card__toolbar">
+        <%= render "shared/export_controls",
+                   csv_path: export_reservas_path(format: :csv),
+                   pdf_path: export_reservas_path(format: :pdf),
+                   filters: [:hospede_nome, :hotel_nome, :data_checkin, :data_checkout, :status],
+                   filter_values: @filters %>
+      </div>
+    <% end %>
   </div>
 
   <% if @reservas.any? %>
@@ -71,25 +90,80 @@
           </thead>
           <tbody>
             <% @reservas.each do |reserva| %>
+              <% hospede = reserva.hospede %>
+              <% hotel = reserva.hotel %>
+              <% avatar_initial = hospede.nome.to_s.first %>
+              <% nights = if reserva.data_checkin.present? && reserva.data_checkout.present?
+                  (reserva.data_checkout - reserva.data_checkin).to_i
+                end %>
+              <% status_key = reserva.status.to_s.downcase %>
+              <% status_class = case status_key
+                when "confirmada" then "status-chip--success"
+                when "pendente" then "status-chip--warning"
+                when "cancelada" then "status-chip--danger"
+                else "status-chip--default"
+              end %>
               <tr>
-                <td><%= reserva.hospede.nome %></td>
-                <td><%= reserva.hotel.nome %></td>
-                <td><%= reserva.data_checkin.present? ? l(reserva.data_checkin) : '-' %></td>
-                <td><%= reserva.data_checkout.present? ? l(reserva.data_checkout) : '-' %></td>
                 <td>
-                  <% status_class = case reserva.status
-                    when "confirmada" then "status-chip--success"
-                    when "pendente" then "status-chip--warning"
-                    else "status-chip--default"
-                  end %>
-                  <span class="status-chip <%= status_class %>"><%= reserva.status.titleize %></span>
+                  <div class="d-flex align-items-center gap-3">
+                    <div class="hc-avatar"><%= avatar_initial.present? ? avatar_initial.upcase : "?" %></div>
+                    <div class="stack-sm mb-0 gap-1">
+                      <strong><%= hospede.nome %></strong>
+                      <% if hospede.email.present? %>
+                        <a href="mailto:<%= hospede.email %>" class="app-link small"><%= hospede.email %></a>
+                      <% end %>
+                    </div>
+                  </div>
                 </td>
-                <td><%= number_to_currency(reserva.valor_total, unit: "R$", separator: ",", delimiter: ".") %></td>
+                <td>
+                  <div class="stack-sm mb-0 gap-1">
+                    <strong><%= hotel.nome %></strong>
+                    <% if hotel.cidade.present? %>
+                      <span class="text-muted small d-inline-flex align-items-center gap-1"><i class="bi bi-geo-alt"></i> <%= hotel.cidade %></span>
+                    <% end %>
+                  </div>
+                </td>
+                <td>
+                  <div class="stack-sm mb-0 gap-1">
+                    <strong><%= reserva.data_checkin.present? ? l(reserva.data_checkin) : '-' %></strong>
+                    <% if reserva.created_at.present? %>
+                      <span class="text-muted small">Criada em <%= l(reserva.created_at.to_date) %></span>
+                    <% end %>
+                  </div>
+                </td>
+                <td>
+                  <div class="stack-sm mb-0 gap-1">
+                    <strong><%= reserva.data_checkout.present? ? l(reserva.data_checkout) : '-' %></strong>
+                    <% if nights.present? && nights.positive? %>
+                      <span class="text-muted small"><%= pluralize(nights, "noite", "noites") %></span>
+                    <% end %>
+                  </div>
+                </td>
+                <td>
+                  <span class="status-chip <%= status_class %>"><%= reserva.status.to_s.titleize %></span>
+                </td>
                 <td class="text-end">
-                  <div class="d-inline-flex gap-2">
-                    <%= link_to 'Ver', reserva_path(reserva), class: "btn btn-outline-secondary btn-sm" %>
-                    <%= link_to 'Editar', edit_reserva_path(reserva), class: "btn btn-outline-secondary btn-sm" %>
-                    <%= button_to 'Excluir', reserva_path(reserva), method: :delete, form: { class: "d-inline" }, class: "btn btn-outline-danger btn-sm", data: { turbo_confirm: 'Tem certeza que deseja excluir esta reserva?' } %>
+                  <div class="stack-sm mb-0 gap-1 text-end">
+                    <strong><%= reserva.valor_total.present? ? number_to_currency(reserva.valor_total, unit: "R$", separator: ",", delimiter: ".") : "-" %></strong>
+                    <% if reserva.updated_at.present? %>
+                      <span class="text-muted small">Atualizada em <%= l(reserva.updated_at.to_date) %></span>
+                    <% end %>
+                  </div>
+                </td>
+                <td class="text-end">
+                  <div class="table-actions">
+                    <%= link_to reserva_path(reserva), class: "btn btn-outline-secondary btn-sm d-inline-flex align-items-center gap-2" do %>
+                      <span>Ver</span>
+                      <i class="bi bi-arrow-up-right"></i>
+                    <% end %>
+                    <%= link_to edit_reserva_path(reserva), class: "btn btn-outline-secondary btn-sm d-inline-flex align-items-center gap-2" do %>
+                      <span>Editar</span>
+                      <i class="bi bi-pencil"></i>
+                    <% end %>
+                    <%= button_to reserva_path(reserva), method: :delete, form: { class: "d-inline" }, class: "btn btn-outline-danger btn-sm d-inline-flex align-items-center gap-2", data: { turbo_confirm: 'Tem certeza que deseja excluir esta reserva?' } do %>
+                      <span>Excluir</span>
+                      <i class="bi bi-trash"></i>
+                    <% end %>
                   </div>
                 </td>
               </tr>
@@ -101,8 +175,8 @@
   <% else %>
     <div class="empty-state">
       <div class="empty-state__icon"><i class="bi bi-calendar-x"></i></div>
-      <p class="mb-2">Nenhuma reserva encontrada.</p>
-      <%= link_to 'Criar reserva', new_reserva_path, class: "btn btn-gradient" %>
+      <p class="mb-2">Nenhuma reserva encontrada para os filtros atuais.</p>
+      <%= link_to 'Criar nova reserva', new_reserva_path, class: "btn btn-gradient" %>
     </div>
   <% end %>
 </div>

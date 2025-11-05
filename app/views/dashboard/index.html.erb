@@ -40,47 +40,154 @@
     </div>
   </div>
 
-  <div id="export-csv" class="surface-card surface-card--compact stack-md mb-5">
-    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
+  <div id="export-hub" class="dashboard-export surface-card surface-card--compact stack-md mb-5">
+    <div class="dashboard-export__header">
       <div class="stack-sm mb-0">
-        <h2 class="h5 fw-semibold mb-0">Exportar hotéis (CSV)</h2>
-        <p class="text-muted mb-0">Selecione ao menos um filtro para gerar um relatório refinado da rede Constantino.</p>
+        <h2 class="h5 fw-semibold mb-0">Central de exportação</h2>
+        <p class="text-muted mb-0">Escolha o conjunto de dados, defina filtros opcionais ou exporte tudo em CSV ou PDF.</p>
       </div>
-      <span class="badge-gradient badge align-self-start">Dados instantâneos</span>
+      <span class="badge-gradient badge">Acesso administrativo</span>
     </div>
 
-    <% if @hotel_filter_cities.any? || @hotel_filter_categories.any? %>
-      <%= form_with url: dashboard_path(format: :csv), method: :get, local: true, data: { turbo: false }, class: "row g-3 align-items-end", id: "csv-export-form" do |form| %>
-        <div class="col-12 col-lg-4">
-          <%= form.label :city, "Cidade", class: "form-label fw-semibold" %>
-          <%= form.select :city,
-                          options_for_select(@hotel_filter_cities.map { |city| [city, city] }, params[:city]),
-                          { include_blank: "Selecione a cidade" },
-                          class: "form-select" %>
+    <form id="dashboard-export-form"
+          class="dashboard-export__form stack-md"
+          data-export-paths='<%= {
+            hotels: export_hotels_path,
+            hospedes: export_hospedes_path,
+            reservas: export_reservas_path
+          }.to_json %>'>
+      <div class="dashboard-export__fields">
+        <div class="dashboard-export__field">
+          <span class="dashboard-export__label">Tipo de dado</span>
+          <div class="btn-group" role="group" aria-label="Tipo de dado">
+            <input type="radio" class="btn-check" name="export_resource" id="export-resource-hotels" value="hotels" autocomplete="off" checked>
+            <label class="btn btn-outline-secondary" for="export-resource-hotels">Hotéis</label>
+
+            <input type="radio" class="btn-check" name="export_resource" id="export-resource-hospedes" value="hospedes" autocomplete="off">
+            <label class="btn btn-outline-secondary" for="export-resource-hospedes">Hóspedes</label>
+
+            <input type="radio" class="btn-check" name="export_resource" id="export-resource-reservas" value="reservas" autocomplete="off">
+            <label class="btn btn-outline-secondary" for="export-resource-reservas">Reservas</label>
+          </div>
         </div>
-        <div class="col-12 col-lg-4">
-          <%= form.label :category, "Categoria", class: "form-label fw-semibold" %>
-          <%= form.select :category,
-                          options_for_select(@hotel_filter_categories.map { |category| [category, category] }, params[:category]),
-                          { include_blank: "Selecione a categoria" },
-                          class: "form-select" %>
+
+        <div class="dashboard-export__field">
+          <span class="dashboard-export__label">Formato</span>
+          <div class="btn-group" role="group" aria-label="Formato">
+            <input type="radio" class="btn-check" name="export_format" id="export-format-csv" value="csv" autocomplete="off" checked>
+            <label class="btn btn-outline-secondary" for="export-format-csv">CSV</label>
+
+            <input type="radio" class="btn-check" name="export_format" id="export-format-pdf" value="pdf" autocomplete="off">
+            <label class="btn btn-outline-secondary" for="export-format-pdf">PDF</label>
+          </div>
         </div>
-        <div class="col-12 col-lg-4">
-          <%= form.label :_, "", class: "form-label d-none" %>
-          <%= form.submit "Gerar CSV", class: "btn btn-gradient w-100" %>
+
+        <div class="dashboard-export__field">
+          <span class="dashboard-export__label">Escopo</span>
+          <div class="btn-group" role="group" aria-label="Escopo">
+            <input type="radio" class="btn-check" name="export_scope" id="export-scope-filtered" value="filtered" autocomplete="off" checked>
+            <label class="btn btn-outline-secondary" for="export-scope-filtered">Filtros aplicados</label>
+
+            <input type="radio" class="btn-check" name="export_scope" id="export-scope-all" value="all" autocomplete="off">
+            <label class="btn btn-outline-secondary" for="export-scope-all">Todos os registros</label>
+          </div>
         </div>
-      <% end %>
-      <p class="text-muted small mb-0">Combine cidade e categoria para relatórios mais ricos. Para cruzamentos avançados, utilize o módulo de BI.</p>
-    <% else %>
-      <p class="text-muted mb-0">Cadastre hotéis para liberar a exportação CSV com filtros.</p>
-    <% end %>
+      </div>
+
+      <div class="dashboard-export__filter-group" data-export-filters data-resource="hotels">
+        <div class="dashboard-export__fields">
+          <div class="dashboard-export__field">
+            <label class="form-label fw-semibold" for="export-hotel-city">Cidade</label>
+            <select class="form-select" id="export-hotel-city" name="cidade">
+              <option value="">Selecione a cidade</option>
+              <% @hotel_filter_cities.each do |city| %>
+                <option value="<%= city %>"><%= city %></option>
+              <% end %>
+            </select>
+          </div>
+          <div class="dashboard-export__field">
+            <label class="form-label fw-semibold" for="export-hotel-category">Categoria</label>
+            <select class="form-select" id="export-hotel-category" name="categoria">
+              <option value="">Selecione a categoria</option>
+              <% @hotel_filter_categories.each do |category| %>
+                <option value="<%= category %>"><%= category %></option>
+              <% end %>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-export__filter-group d-none" data-export-filters data-resource="hospedes">
+        <div class="dashboard-export__fields">
+          <div class="dashboard-export__field">
+            <label class="form-label fw-semibold" for="export-hospede-nome">Nome</label>
+            <input type="text" class="form-control" id="export-hospede-nome" name="nome" placeholder="Ex.: Maria">
+          </div>
+          <div class="dashboard-export__field">
+            <label class="form-label fw-semibold" for="export-hospede-documento">Documento</label>
+            <input type="text" class="form-control" id="export-hospede-documento" name="documento" placeholder="CPF ou RG">
+          </div>
+          <div class="dashboard-export__field">
+            <label class="form-label fw-semibold" for="export-hospede-email">E-mail</label>
+            <input type="email" class="form-control" id="export-hospede-email" name="email" placeholder="contato@exemplo.com">
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-export__filter-group d-none" data-export-filters data-resource="reservas">
+        <div class="dashboard-export__fields">
+          <div class="dashboard-export__field">
+            <label class="form-label fw-semibold" for="export-reserva-hospede">Hóspede</label>
+            <input type="text" class="form-control" id="export-reserva-hospede" name="hospede_nome" placeholder="Nome do hóspede">
+          </div>
+          <div class="dashboard-export__field">
+            <label class="form-label fw-semibold" for="export-reserva-hotel">Hotel</label>
+            <input type="text" class="form-control" id="export-reserva-hotel" name="hotel_nome" placeholder="Nome do hotel">
+          </div>
+        </div>
+        <div class="dashboard-export__fields">
+          <div class="dashboard-export__field">
+            <label class="form-label fw-semibold" for="export-reserva-checkin">Check-in a partir de</label>
+            <input type="date" class="form-control" id="export-reserva-checkin" name="data_checkin">
+          </div>
+          <div class="dashboard-export__field">
+            <label class="form-label fw-semibold" for="export-reserva-checkout">Check-out até</label>
+            <input type="date" class="form-control" id="export-reserva-checkout" name="data_checkout">
+          </div>
+          <div class="dashboard-export__field">
+            <label class="form-label fw-semibold" for="export-reserva-status">Status</label>
+            <select class="form-select" id="export-reserva-status" name="status">
+              <option value="">Todos</option>
+              <% @reserva_statuses.each do |status| %>
+                <option value="<%= status %>"><%= status.titleize %></option>
+              <% end %>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-export__actions">
+        <button type="submit" class="btn btn-gradient d-inline-flex align-items-center gap-2">
+          <i class="bi bi-cloud-arrow-down"></i>
+          Gerar arquivo
+        </button>
+        <button type="reset" class="btn btn-outline-secondary" data-export-reset>
+          Limpar filtros
+        </button>
+      </div>
+    </form>
+
+    <p class="text-muted small mb-0">Escolha "Todos os registros" para gerar relatórios completos sem filtros.</p>
   </div>
 
   <div class="row g-4 align-items-start">
     <div class="col-12 col-lg-7">
       <div class="surface-card surface-card--flush table-card h-100">
         <div class="table-card__header">
-          <h2 class="table-card__title">Últimas reservas</h2>
+          <div>
+            <span class="page-eyebrow d-inline-flex align-items-center gap-2"><i class="bi bi-calendar2-week"></i> Últimas reservas</span>
+            <h2 class="table-card__title">Movimento mais recente</h2>
+          </div>
           <%= link_to "Ver todas", reservas_path, class: "btn btn-sm btn-outline-secondary" %>
         </div>
         <% if @latest_reservas.present? %>
@@ -93,6 +200,7 @@
                     <th>Hotel</th>
                     <th>Check-in</th>
                     <th>Status</th>
+                    <th></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -113,9 +221,15 @@
                         <% status_class = case reserva.status
                           when "confirmada" then "status-chip--success"
                           when "pendente" then "status-chip--warning"
+                          when "cancelada" then "status-chip--danger"
                           else "status-chip--default"
                         end %>
                         <span class="status-chip <%= status_class %>"><%= reserva.status.titleize %></span>
+                      </td>
+                      <td class="text-end">
+                        <%= link_to reserva_path(reserva), class: "btn btn-sm btn-outline-secondary" do %>
+                          Ver detalhes <i class="bi bi-arrow-up-right"></i>
+                        <% end %>
                       </td>
                     </tr>
                   <% end %>
@@ -134,48 +248,158 @@
     <div class="col-12 col-lg-5">
       <div class="action-panel h-100">
         <span class="action-panel__title">Ações rápidas</span>
-        <%= link_to new_hotel_path, class: "btn btn-outline-secondary d-flex justify-content-between align-items-center" do %>
-          <span>Cadastrar novo hotel</span>
-          <i class="bi bi-arrow-up-right"></i>
-        <% end %>
-        <%= link_to new_hospede_path, class: "btn btn-outline-secondary d-flex justify-content-between align-items-center" do %>
-          <span>Cadastrar hóspede</span>
-          <i class="bi bi-person-plus"></i>
-        <% end %>
-        <%= link_to new_reserva_path, class: "btn btn-outline-secondary d-flex justify-content-between align-items-center" do %>
-          <span>Gerar reserva</span>
-          <i class="bi bi-calendar-plus"></i>
-        <% end %>
-        <button class="btn btn-outline-secondary d-flex justify-content-between align-items-center" disabled>
-          <span>Relatórios (em breve)</span>
-          <i class="bi bi-clock-history"></i>
-        </button>
+        <div class="action-panel__group">
+          <%= link_to new_hotel_path, class: "btn btn-outline-secondary d-flex justify-content-between align-items-center" do %>
+            <span>Cadastrar novo hotel</span>
+            <i class="bi bi-arrow-up-right"></i>
+          <% end %>
+          <%= link_to new_hospede_path, class: "btn btn-outline-secondary d-flex justify-content-between align-items-center" do %>
+            <span>Cadastrar hóspede</span>
+            <i class="bi bi-person-plus"></i>
+          <% end %>
+          <%= link_to new_reserva_path, class: "btn btn-outline-secondary d-flex justify-content-between align-items-center" do %>
+            <span>Gerar reserva</span>
+            <i class="bi bi-calendar-plus"></i>
+          <% end %>
+          <button class="btn btn-outline-secondary d-flex justify-content-between align-items-center" disabled>
+            <span>Relatórios (em breve)</span>
+            <i class="bi bi-clock-history"></i>
+          </button>
+        </div>
       </div>
     </div>
   </div>
 
   <%= javascript_tag do %>
     (function() {
-      function attachHandler() {
-        var form = document.getElementById("csv-export-form");
+      function initDashboardExport() {
+        var form = document.getElementById("dashboard-export-form");
         if (!form || form.dataset.enhanced === "true") { return; }
         form.dataset.enhanced = "true";
 
-        form.addEventListener("submit", function(event) {
-          var cityField = form.querySelector("[name='city']");
-          var categoryField = form.querySelector("[name='category']");
-          var hasCity = cityField && cityField.value.trim() !== "";
-          var hasCategory = categoryField && categoryField.value.trim() !== "";
+        var exportPaths = {};
+        try {
+          exportPaths = JSON.parse(form.dataset.exportPaths || "{}");
+        } catch (error) {
+          exportPaths = {};
+        }
 
-          if (!hasCity && !hasCategory) {
-            event.preventDefault();
-            alert("Selecione pelo menos um filtro (cidade ou categoria) antes de exportar o CSV.");
-          }
+        var datasetRadios = form.querySelectorAll("input[name='export_resource']");
+        var formatRadios = form.querySelectorAll("input[name='export_format']");
+        var scopeRadios = form.querySelectorAll("input[name='export_scope']");
+        var filterGroups = form.querySelectorAll("[data-export-filters]");
+        var resetButton = form.querySelector('[data-export-reset]');
+
+        function activeDataset() {
+          var checked = form.querySelector("input[name='export_resource']:checked");
+          return checked ? checked.value : null;
+        }
+
+        function activeScope() {
+          var checked = form.querySelector("input[name='export_scope']:checked");
+          return checked ? checked.value : "filtered";
+        }
+
+        function updateFilterGroups() {
+          var dataset = activeDataset();
+          filterGroups.forEach(function(group) {
+            if (group.dataset.resource === dataset) {
+              group.classList.remove("d-none");
+            } else {
+              group.classList.add("d-none");
+            }
+          });
+          toggleFiltersAccessibility();
+        }
+
+        function toggleFiltersAccessibility() {
+          var dataset = activeDataset();
+          var scope = activeScope();
+          filterGroups.forEach(function(group) {
+            var disable = scope === "all" || group.dataset.resource !== dataset;
+            group.querySelectorAll("input, select, textarea").forEach(function(field) {
+              field.disabled = disable;
+            });
+          });
+        }
+
+        function gatherFilters(dataset) {
+          var params = new URLSearchParams();
+          var group = form.querySelector('[data-export-filters][data-resource="' + dataset + '"]');
+          if (!group) { return params; }
+
+          group.querySelectorAll("input, select, textarea").forEach(function(field) {
+            if (!field.name || field.disabled || !field.value) { return; }
+            params.append(field.name, field.value);
+          });
+
+          return params;
+        }
+
+        datasetRadios.forEach(function(radio) {
+          radio.addEventListener("change", updateFilterGroups);
         });
+
+        scopeRadios.forEach(function(radio) {
+          radio.addEventListener("change", toggleFiltersAccessibility);
+        });
+
+        if (resetButton) {
+          resetButton.addEventListener("click", function() {
+            filterGroups.forEach(function(group) {
+              group.querySelectorAll("input, select, textarea").forEach(function(field) {
+                if (field.type === "radio" || field.type === "checkbox") {
+                  field.checked = false;
+                } else {
+                  field.value = "";
+                }
+              });
+            });
+            // reset scope to filtered after clearing
+            var filteredRadio = form.querySelector("#export-scope-filtered");
+            if (filteredRadio) { filteredRadio.checked = true; }
+            toggleFiltersAccessibility();
+          });
+        }
+
+        form.addEventListener("submit", function(event) {
+          event.preventDefault();
+
+          var dataset = activeDataset();
+          var format = form.querySelector("input[name='export_format']:checked");
+          var scope = activeScope();
+
+          if (!dataset || !format) {
+            alert("Selecione o tipo de dado e o formato do arquivo.");
+            return;
+          }
+
+          var basePath = exportPaths[dataset];
+          if (!basePath) {
+            alert("Não foi possível determinar o endereço de exportação.");
+            return;
+          }
+
+          var params = new URLSearchParams();
+          params.append("export_scope", scope);
+
+          if (scope !== "all") {
+            var filterParams = gatherFilters(dataset);
+            filterParams.forEach(function(value, key) {
+              params.append(key, value);
+            });
+          }
+
+          var queryString = params.toString();
+          var url = basePath + "." + format.value + (queryString ? "?" + queryString : "");
+          window.location.href = url;
+        });
+
+        updateFilterGroups();
       }
 
-      document.addEventListener("turbo:load", attachHandler);
-      document.addEventListener("DOMContentLoaded", attachHandler);
+      document.addEventListener("turbo:load", initDashboardExport);
+      document.addEventListener("DOMContentLoaded", initDashboardExport);
     })();
   <% end %>
 <% else %>

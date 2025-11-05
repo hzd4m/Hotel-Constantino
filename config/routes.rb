@@ -23,11 +23,21 @@ Rails.application.routes.draw do
     resources :reservas, only: [:index, :show]
   end
   get "minhas-reservas", to: "guests/reservas#index", as: :guest_reservas
-  resources :hotels 
-  resources :hospedes 
+  resources :hotels do
+    collection do
+      get :export
+    end
+  end
+
+  resources :hospedes do
+    collection do
+      get :export
+    end
+  end
+
   resources :reservas do
     collection do
-      get :export_pdf
+      get :export
     end
   end
 
