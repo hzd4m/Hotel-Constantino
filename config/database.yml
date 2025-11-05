@@ -24,4 +24,8 @@ test:
 # is mounted as a persistent Docker volume in config/deploy.yml.
 production:
   <<: *default
-  database: db/production.sqlite3
+  database: <%= ENV.fetch("DATABASE_PATH", Rails.root.join("db", "production.sqlite3")) %>
+
+cable:
+  <<: *default
+  database: <%= ENV.fetch("CABLE_DATABASE_PATH", ENV.fetch("DATABASE_PATH", Rails.root.join("db", "cable.sqlite3"))) %>
